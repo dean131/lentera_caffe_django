@@ -1,0 +1,42 @@
+{% load static %}
+
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h1 class="modal-title fs-3" id="registerModalLabel"><strong>Tambah Item</strong></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row g-1">
+                        <div class="col-lg-6">
+                            <label for="register-name" class="form-label">Nama Item:</label>
+                            <input type="text" class="form-control" id="register-name">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="register-category" class="form-label">Kategori:</label>
+                            <input type="email" class="form-control" id="register-category">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="register-price" class="form-label">Harga:</label>
+                            <input type="number" class="form-control" id="register-price">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="register-stock" class="form-label">Stok:</label>
+                            <input type="number" class="form-control" id="register-stock">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="register-picture" class="form-label">Gambar</label>
+                            <input class="form-control" type="file" id="register-picture">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="register-btn">Tambah</button>
+            </div>
+        </div>
+    </div>
+</div>

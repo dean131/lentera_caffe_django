@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><strong>Data Order</strong></h1>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-danger">
+            <i class="fa-regular fa-file-pdf"></i>
+            Cetak PDF
+        </button>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Id User</th>
+                            <th>Total Pembayaran</th>
+                            <th>waktu pemesanan</th>
+                            <th>status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>Rp10000</td>
+                            <td>01-01-2023</td>
+                            <td class="text-danger">Menunggu</td>
+                            <td class="d-flex justify-content-around">
+                                <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>Rp22000</td>
+                            <td>03-04-2023</td>
+                            <td class="text-success">Selesai</td>
+                            <td class="d-flex justify-content-around">
+                                <button type="button" class="btn btn-danger" data-id="2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/delete_modal.html' %}
+
+{% endblock %}
+
+
+{% block script %}
+    <script>
+        
+        $(document).ready(function () {
+            $('#collapseThree').collapse('show');
+            $('.orders-nav-item').addClass('active');
+            $('.order-nav-item').addClass('active');
+        });
+    </script>
+{% endblock %}

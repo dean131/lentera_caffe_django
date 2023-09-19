@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><strong>Data Keranjang</strong></h1>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Id User</th>
+                            <th>Id Order</th>
+                            <th>Id Item</th>
+                            <th>Jumlah</th>
+                            <th>Total Harga</th>
+                            <th>Keterangan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>3</td>
+                            <td>22000</td>
+                            <td>Lorem ipsum</td>
+                            <td class="d-flex justify-content-around">
+                                <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/delete_modal.html' %}
+
+{% endblock %}
+
+
+{% block script %}
+    <script>   
+        $(document).ready(function () {
+            $('#collapseThree').collapse('show');
+            $('.orders-nav-item').addClass('active');
+            $('.cart-nav-item').addClass('active');
+        });
+    </script>
+{% endblock %}

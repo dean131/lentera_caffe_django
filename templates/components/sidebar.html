@@ -1,0 +1,82 @@
+{% load static %}
+
+<ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center my-3" href="{% url 'dashboard' %}">
+        <div class="sidebar-brand-icon">
+            <i class="fa-solid fa-mug-hot"></i>
+        </div>
+        <div class="sidebar-brand-text m-2">Lentera Caffe</div>
+    </a>
+
+    <div class="d-flex align-items-center bg-light my-3 p-1 m-1 rounded">
+        <div class="flex-shrink-0 mx-auto d-md-inline">
+            <img width="50" height="50" class="rounded-circle" src="https://my.kumonglobal.com/wp-content/uploads/2022/03/Learn-from-Rowan-Atkinson_Kumon-Malaysia_530x530_NewsThumbnail.jpg">
+        </div>
+        <div class="flex-grow-1 ms-3 d-none d-md-inline admin-name">
+            Ilham Dean Abdillah
+        </div>
+    </div>
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item dashboard-nav-item">
+        <a class="nav-link" href="{% url 'dashboard' %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item users-nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+            aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fa-solid fa-users"></i>
+            <span>Pengguna</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item customers-nav-item" href="{% url 'customers_page' %}">Pelanggan</a>
+                <a class="collapse-item cashier-nav-item" href="{% url 'cashier_page' %}">Kasir</a>
+                <a class="collapse-item admin-nav-item" href="{% url 'admin_page' %}">Admin</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Nav Item -  -->
+    <li class="nav-item menu-nav-item">
+        <a class="nav-link" href="{% url 'menu_page' %}">
+            <i class="bi bi-card-checklist"></i>
+            <span>Menu</span>
+        </a>
+    </li>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item orders-nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+            aria-expanded="true" aria-controls="collapseThree">
+            <i class="fa-regular fa-file-lines"></i>
+            <span>Pesanan</span>
+        </a>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item order-nav-item" href="{% url 'order_page' %}">Order</a>
+                <a class="collapse-item cart-nav-item" href="{% url 'cart_page' %}">Keranjang</a>
+            </div>
+        </div>
+    </li>
+    
+    <!-- Nav Item -  -->
+    <li class="nav-item notification-nav-item">
+        <a class="nav-link" href="{% url 'notification_page' %}">
+            <i class="fa-regular fa-envelope"></i>
+            <span>Notifikasi</span>
+        </a>
+    </li>
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+
+</ul>

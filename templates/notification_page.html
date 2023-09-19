@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><strong>Data Notifikasi</strong></h1>
+    </div>
+
+    <div class="mb-3">
+        <button class="btn btn-danger">
+            <i class="fa-solid fa-plus"></i>
+            Tambahkan
+        </button>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Judul</th>
+                            <th>Keterangan</th>
+                            <th>Kategori</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Selesaikan Pembayaran</td>
+                            <td>Lorem Ipsum</td>
+                            <td>Pembayaran</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Maintenence</td>
+                            <td>Lorem Ipsum</td>
+                            <td>Sistem</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $('.notification-nav-item').addClass('active');
+        });
+    </script>
+{% endblock %}

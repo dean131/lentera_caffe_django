@@ -1,0 +1,42 @@
+{% load static %}
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h1 class="modal-title fs-3" id="editModalLabel"><strong>Edit Item</strong></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row g-1">
+                        <div class="col-lg-6">
+                            <label for="edit-name" class="form-label">Nama Item:</label>
+                            <input type="text" class="form-control" id="edit-name">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-category" class="form-label">Kategori:</label>
+                            <input type="email" class="form-control" id="edit-category">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-price" class="form-label">Harga:</label>
+                            <input type="text" class="form-control" id="edit-price">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-stock" class="form-label">Stok:</label>
+                            <input type="text" class="form-control" id="edit-stock">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-picture" class="form-label">Gambar</label>
+                            <input class="form-control" type="file" id="edit-picture">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="edit-btn">Tambah</button>
+            </div>
+        </div>
+    </div>
+</div>
