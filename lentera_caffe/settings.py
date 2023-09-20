@@ -120,7 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = '/home/evod5076/public_html/lenteracaffe.e-vodes.com/lenteracaffe/static'
+STATIC_ROOT = '/home/evod5076/public_html/lenteracaffe.e-vodes.com/static'
 
 # MEDIA_URL = 'media/'
 # MEDIA_ROOT = '/home/evod5076/public_html/lenteracaffe.e-vodes.com/lenteracaffe/static/media'
