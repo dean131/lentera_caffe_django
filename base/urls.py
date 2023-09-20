@@ -15,4 +15,6 @@ urlpatterns = [
     path('saw-page', views.saw_page, name='saw_page'),
     path('kriteria-page', views.kriteria_page, name='kriteria_page'),
     path('subkriteria-page', views.subkriteria_page, name='subkriteria_page'),
+
+    path('delete-item/', views.delete_item, name='delete_item'),
 ]

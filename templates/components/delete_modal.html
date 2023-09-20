@@ -7,12 +7,16 @@
                 <h1 class="modal-title fs-5" id="deleteModalLabel"><strong>Hapus Data</strong></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form method="post" id="deleteForm" hidden>
+                {% csrf_token %}
+                <input type="text" name="id" id="inputId" hidden>
+            </form>
             <div class="modal-body">
                 Yakin ingin menghapus data?
             </div>
             <div class="modal-footer d-flex justify-content-around">
                 <button type="button" class="btn btn-outline-danger col-4" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger col-4">Yakin</button>
+                <button type="submit" form="deleteForm" class="btn btn-danger col-4">Yakin</button>
             </div>
         </div>
     </div>

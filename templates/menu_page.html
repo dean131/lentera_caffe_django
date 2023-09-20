@@ -38,8 +38,8 @@
                             <td>{{menu.nama_item}}</td>
                             <td>{{menu.kategori}}</td>
                             <td>Rp{{menu.harga}}</td>
-                            <td>0</td>
-                            <td>Ada</td>
+                            <td>{{menu.nilai}}</td>
+                            <td>{{menu.stok}}</td>
                             <td class="text-center">
                                 <img width="50" height="50" src="https://img.kurio.network/_Ebs2rDtquiA4Cf2zJljDmjneq8=/440x440/filters:quality(80)/https://kurio-img.kurioapps.com/21/02/24/4f99af33-b3c1-47cd-a219-f1a5289f8b29.jpe" class="rounded">
                             </td>
@@ -47,7 +47,7 @@
                                 <button type="button" class="btn btn-warning edit-table-btn"  data-bs-toggle="modal" data-bs-target="#editModal">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <button type="button" class="btn btn-danger btn-delete" data-bs-whatever="{{menu}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -74,6 +74,11 @@
             $('.menu-nav-item').addClass('active');
             $('.items-nav-item').addClass('active');
 
+            var frm = document.getElementById('deleteForm');
+            if(frm) {
+                frm.action = '/admin/delete-item/' 
+            }
+
 
             $('.edit-table-btn').on('click', function() {
                 var row = $(this).closest('tr');
@@ -90,6 +95,15 @@
                 document.getElementById('edit-price').value = price;
                 document.getElementById('edit-stock').value = stock;
             });
+
+
+            var table = $('#dataTable').DataTable();
+            var row_data;
+            $('#dataTable tbody').on( 'click', 'button', function () {
+                row_data = table.row( $(this).parents('tr') ).data();
+                $('#inputId').val(row_data[0]);
+            });
+
         });
     </script>
 {% endblock %}

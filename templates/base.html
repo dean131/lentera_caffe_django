@@ -36,6 +36,17 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid py-4">
+
+                    <!-- start message -->
+                    {% if messages %}
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{message}}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <!-- end message -->
+
                     {% block content %}
                     {% endblock %}
                 </div>
