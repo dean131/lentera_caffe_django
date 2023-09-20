@@ -9,33 +9,36 @@
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <div class="row g-1">
-                        <div class="col-lg-6">
-                            <label for="register-name" class="form-label">Nama Item:</label>
-                            <input type="text" class="form-control" id="register-name">
+                    <form method="post" id="addItemForm">
+                        {% csrf_token %}
+                        <div class="row g-1">
+                            <div class="col-lg-6">
+                                <label for="register-name" class="form-label">Nama Item:</label>
+                                <input type="text" class="form-control" id="register-name" name="register-name">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="register-category" class="form-label">Kategori:</label>
+                                <input type="text" class="form-control" id="register-category" name="register-category">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="register-price" class="form-label">Harga:</label>
+                                <input type="number" class="form-control" id="register-price" name="register-price">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="register-stock" class="form-label">Stok:</label>
+                                <input type="text" class="form-control" id="register-stock" name="register-stock">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="register-picture" class="form-label">Gambar</label>
+                                <input class="form-control" type="file" id="register-picture" name="register-picture">
+                            </div>
                         </div>
-                        <div class="col-lg-6">
-                            <label for="register-category" class="form-label">Kategori:</label>
-                            <input type="email" class="form-control" id="register-category">
-                        </div>
-                        <div class="col-lg-6">
-                            <label for="register-price" class="form-label">Harga:</label>
-                            <input type="number" class="form-control" id="register-price">
-                        </div>
-                        <div class="col-lg-6">
-                            <label for="register-stock" class="form-label">Stok:</label>
-                            <input type="number" class="form-control" id="register-stock">
-                        </div>
-                        <div class="col-lg-6">
-                            <label for="register-picture" class="form-label">Gambar</label>
-                            <input class="form-control" type="file" id="register-picture">
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger" id="register-btn">Tambah</button>
+                <button type="submit" form="addItemForm" class="btn btn-danger" id="register-btn">Tambah</button>
             </div>
         </div>
     </div>

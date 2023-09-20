@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><strong>Data Subkriteria</strong></h1>
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#registerModal">
+            <i class="fa-solid fa-plus"></i>
+            Tambahkan
+        </button>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Kriteria</th>
+                            <th>Subkriteria</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in subkriterias %}
+                        <tr>
+                            <td>{{sub.id}}</td>
+                            <td>{{sub.kriteria}}</td>
+                            <td>{{sub.nama_subkriteria}}</td>
+                            <td class="d-flex justify-content-around">
+                                <button type="button" class="btn btn-warning edit-table-btn"  data-bs-toggle="modal" data-bs-target="#editModal">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include 'components/edit_modal_item.html' %}
+
+    {% include 'components/delete_modal.html' %}
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        $(document).ready(function () {
+            $('#collapseMenus').collapse('show');
+            $('.menu-nav-item').addClass('active');
+            $('.subkriteria-nav-item').addClass('active');
+
+
+            // $('.edit-table-btn').on('click', function() {
+            //     var row = $(this).closest('tr');
+            //     var id = row.find('td:eq(0)').text();
+            //     var name = row.find('td:eq(1)').text();
+            //     var category = row.find('td:eq(2)').text();
+            //     var price = row.find('td:eq(3)').text();
+            //     // var rating = row.find('td:eq(4)').text();
+            //     var stock = row.find('td:eq(5)').text();
+            //     // var picture = row.find('td:eq(6)').text();
+
+            //     document.getElementById('edit-name').value = name;
+            //     document.getElementById('edit-category').value = category;
+            //     document.getElementById('edit-price').value = price;
+            //     document.getElementById('edit-stock').value = stock;
+            // });
+        });
+    </script>
+{% endblock %}

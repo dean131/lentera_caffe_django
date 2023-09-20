@@ -43,12 +43,21 @@
         </div>
     </li>
 
-    <!-- Nav Item -  -->
+    <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item menu-nav-item">
-        <a class="nav-link" href="{% url 'menu_page' %}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMenus"
+            aria-expanded="true" aria-controls="collapseMenus">
             <i class="bi bi-card-checklist"></i>
             <span>Menu</span>
         </a>
+        <div id="collapseMenus" class="collapse" aria-labelledby="headingMenus" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item items-nav-item" href="{% url 'menu_page' %}">Item</a>
+                <a class="collapse-item saw-nav-item" href="{% url 'saw_page' %}">SAW</a>
+                <a class="collapse-item kriteria-nav-item" href="{% url 'kriteria_page' %}">Kriteria</a>
+                <a class="collapse-item subkriteria-nav-item" href="{% url 'subkriteria_page' %}">Subkriteria</a>
+            </div>
+        </div>
     </li>
 
     <!-- Nav Item - Pages Collapse Menu -->
@@ -58,7 +67,7 @@
             <i class="fa-regular fa-file-lines"></i>
             <span>Pesanan</span>
         </a>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item order-nav-item" href="{% url 'order_page' %}">Order</a>
                 <a class="collapse-item cart-nav-item" href="{% url 'cart_page' %}">Keranjang</a>

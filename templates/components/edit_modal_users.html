@@ -9,37 +9,40 @@
             </div>
             <div class="modal-body">
             <div class="container-fluid">
-                <div class="row g-3">
-                    <div class="col-lg-12">
-                        <label for="edit-name" class="form-label">Nama:</label>
-                        <input type="text" class="form-control" id="edit-name">
+                <form method="put" id="editUserForm"> 
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-lg-12">
+                            <label for="edit-name" class="form-label">Nama:</label>
+                            <input type="text" class="form-control" id="edit-name">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="edit-email">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-phone" class="form-label">No. Telepon:</label>
+                            <input type="number" class="form-control" id="edit-phone">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-password1" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="edit-password1">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="user-password2" class="form-label">Konfirmasi Password:</label>
+                            <input type="password" class="form-control" id="edit-password2">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="edit-foto" class="form-label">Foto</label>
+                            <input class="form-control" type="file" id="edit-foto">
+                        </div>
                     </div>
-                    <div class="col-lg-6">
-                        <label for="edit-email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="edit-email">
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="edit-phone" class="form-label">No. Telepon:</label>
-                        <input type="number" class="form-control" id="edit-phone">
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="edit-password1" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="edit-password1">
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="user-password2" class="form-label">Konfirmasi Password:</label>
-                        <input type="password" class="form-control" id="edit-password2">
-                    </div>
-                    <div class="col-lg-6">
-                        <label for="edit-foto" class="form-label">Foto</label>
-                        <input class="form-control" type="file" id="edit-foto">
-                    </div>
-                </div>
+                </from>
             </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-danger" id="edit-btn">Simpan</button>
+                <button type="button" form="editUserForm" class="btn btn-danger" id="edit-btn">Simpan</button>
             </div>
         </div>
     </div>

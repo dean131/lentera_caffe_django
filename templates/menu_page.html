@@ -32,12 +32,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for menu in menus %}
                         <tr>
-                            <td>1</td>
-                            <td>Mendoan</td>
-                            <td>Makanan</td>
-                            <td>Rp5000</td>
-                            <td>4.8</td>
+                            <td>{{menu.id}}</td>
+                            <td>{{menu.nama_item}}</td>
+                            <td>{{menu.kategori}}</td>
+                            <td>Rp{{menu.harga}}</td>
+                            <td>0</td>
                             <td>Ada</td>
                             <td class="text-center">
                                 <img width="50" height="50" src="https://img.kurio.network/_Ebs2rDtquiA4Cf2zJljDmjneq8=/440x440/filters:quality(80)/https://kurio-img.kurioapps.com/21/02/24/4f99af33-b3c1-47cd-a219-f1a5289f8b29.jpe" class="rounded">
@@ -51,6 +52,7 @@
                                 </button>
                             </td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -68,7 +70,9 @@
 {% block script %}
     <script>
         $(document).ready(function () {
+            $('#collapseMenus').collapse('show');
             $('.menu-nav-item').addClass('active');
+            $('.items-nav-item').addClass('active');
 
 
             $('.edit-table-btn').on('click', function() {
