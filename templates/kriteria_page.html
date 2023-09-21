@@ -42,7 +42,7 @@
                                 <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#kriteriaModal">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <button type="button" class="btn btn-danger btn-delete" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -89,6 +89,16 @@
                 $('#inputAttribut').val(row_data[4]);
 
                 document.getElementById('kriteriaForm').action = '{% url "edit_kriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+            });
+
+            $('.btn-delete').on('click', function() {
+                // get data from row 
+                row_data = table.row($(this).parents('tr') ).data();
+                console.log(row_data[0])
+                $('#inputId').val(row_data[0]);
+
+                document.getElementById('deleteForm').action = '{% url "delete_kriteria" %}';
                 $('[name="csrfmiddlewaretoken"]').val(csrf_token);
             });
         });

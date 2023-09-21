@@ -241,15 +241,27 @@ def edit_kriteria(request):
 
 def delete_kriteria(request):
     if request.method == 'POST':
-        item_id = request.POST.get('id')
-        item = Item.objects.get(id=int(item_id))
-        saws = Saw.objects.filter(alternatif=item)
-        for saw in saws:
+        kriteria_id = request.POST.get('id')
+
+        kriteria = Kriteria.objects.get(id=int(kriteria_id))
+        subkriterias = kriteria.subkriteria_set.all()
+        list_saw = []
+        for sub in subkriterias:
+            saws = sub.saw_set.all()
+            for saw in saws:
+                list_saw.append(saw)
+        
+        for saw in list_saw:
             saw.delete()
-        item.delete()
+
+        for sub in subkriterias:
+            sub.delete()
+        
+        kriteria.delete()
+
         messages.success(
                 request=request, 
-                message='Succes menghapus item!', 
+                message='Succes menghapus kriteria!', 
                 extra_tags='success'
         )
     return redirect('kriteria_page')
