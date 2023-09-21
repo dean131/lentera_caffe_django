@@ -9,7 +9,7 @@
     </div>
 
     <div class="mb-3">
-        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#registerModal">
+        <button type="button" class="btn btn-danger btn-add" data-bs-toggle="modal" data-bs-target="#kriteriaModal">
             <i class="fa-solid fa-plus"></i>
             Tambahkan
         </button>
@@ -39,7 +39,7 @@
                             <td>{{kriteria.bobot}}</td>
                             <td>{{kriteria.atribut}}</td>
                             <td class="d-flex justify-content-around">
-                                <button type="button" class="btn btn-warning edit-table-btn"  data-bs-toggle="modal" data-bs-target="#editModal">
+                                <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#kriteriaModal">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    {% include 'components/add_modal_kriteria.html' %}
+    {% include 'components/modal_kriteria.html' %}
 
     {% include 'components/delete_modal.html' %}
 
@@ -67,22 +67,30 @@
             $('.menu-nav-item').addClass('active');
             $('.kriteria-nav-item').addClass('active');
 
+            const csrf_token = '{{csrf_token}}';
 
-            // $('.edit-table-btn').on('click', function() {
-            //     var row = $(this).closest('tr');
-            //     var id = row.find('td:eq(0)').text();
-            //     var name = row.find('td:eq(1)').text();
-            //     var category = row.find('td:eq(2)').text();
-            //     var price = row.find('td:eq(3)').text();
-            //     // var rating = row.find('td:eq(4)').text();
-            //     var stock = row.find('td:eq(5)').text();
-            //     // var picture = row.find('td:eq(6)').text();
+            $('.btn-add').on('click', function() {
+                $('#kriteriaModalLabel').html('<strong>Tambah Kriteria</strong>');
+                $('input').val('')
+                document.getElementById('kriteriaForm').action = '{% url "add_kriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+            });
 
-            //     document.getElementById('edit-name').value = name;
-            //     document.getElementById('edit-category').value = category;
-            //     document.getElementById('edit-price').value = price;
-            //     document.getElementById('edit-stock').value = stock;
-            // });
+            var table = $('#dataTable').DataTable();
+            var row_data;
+            $('.btn-edit').on('click', function() {
+                $('#kriteriaModalLabel').html('<strong>Edit Kriteria</strong>');
+
+                // get data from row 
+                row_data = table.row($(this).parents('tr') ).data();
+                $('#inputNamaKriteria').val(row_data[1]);
+                $('#inputPertanyaan').val(row_data[2]);
+                $('#inputBobot').val(parseFloat(row_data[3]));
+                $('#inputAttribut').val(row_data[4]);
+
+                document.getElementById('kriteriaForm').action = '{% url "edit_kriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+            });
         });
     </script>
 {% endblock %}

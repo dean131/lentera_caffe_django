@@ -1,0 +1,48 @@
+{% load static %}
+
+<div class="modal fade" id="kriteriaModal" tabindex="-1" aria-labelledby="kriteriaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h1 class="modal-title fs-3" id="kriteriaModalLabel"><strong>Tambah Kriteria</strong></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form method="post" id="kriteriaForm">
+                        {% csrf_token %}
+                        <div class="row g-1">
+                            <div class="col-lg-6">
+                                <label for="inputNamaKriteria" class="form-label">Nama Kriteria:</label>
+                                <input type="text" class="form-control" id="inputNamaKriteria" name="inputNamaKriteria">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputPertanyaan" class="form-label">Pertanyaan:</label>
+                                <input type="text" class="form-control" id="inputPertanyaan" name="inputPertanyaan">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputBobot" class="form-label">Bobot:</label>
+                                <input type="number" class="form-control" id="inputBobot" name="inputBobot">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputAttribut" class="form-label">Attribut:</label>
+                                <select class="form-select" aria-label="Default select example" id="inputAttribut" name="inputAttribut">
+                                    <option value="cost">Cost</option>
+                                    <option value="benefit">Benefit</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputListSubkriteria" class="form-label">Subkriteria:</label>
+                                <textarea class="form-control" id="inputListSubkriteria" rows="3" placeholder="contoh: siang, sore, malam" name="inputListSubkriteria"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" form="kriteriaForm" class="btn btn-danger" id="register-btn">Tambah</button>
+            </div>
+        </div>
+    </div>
+</div>

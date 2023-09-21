@@ -1,0 +1,74 @@
+{% load static %}
+
+<!-- Item Modal  -->
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h1 class="modal-title fs-3" id="itemModalLabel"><strong>Tambah Item</strong></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form method="post" id="itemForm">
+                        {% csrf_token %}
+                        <div class="row g-1">
+                            <div class="col-lg-6">
+                                <label for="inputNamaItem" class="form-label">Nama Item:</label>
+                                <input type="text" class="form-control" id="inputNamaItem" name="inputNamaItem" required>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputKategoriItem" class="form-label">Kategori:</label>
+                                <select class="form-select" aria-label="Default select example" id="inputKategoriItem" name="inputKategoriItem">
+                                    <option value="makanan">Makanan</option>
+                                    <option value="minuman">Minuman</option>
+                                    <option value="snack">Snack</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputHargaItem" class="form-label">Harga:</label>
+                                <input type="number" class="form-control" id="inputHargaItem" name="inputHargaItem" required>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputStokItem" class="form-label">Stok:</label>
+                                <select class="form-select" aria-label="Default select example" id="inputStokItem" name="inputStokItem">
+                                    <option value="tersedia">Tersedia</option>
+                                    <option value="tidak tersedia">Tidak tersedia</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputGambarItem" class="form-label">Gambar</label>
+                                <input class="form-control" type="file" id="inputGambarItem" name="inputGambarItem">
+                            </div>
+
+                            <div class="col-lg-12 mb-3">
+                                <input type="text" name="inputIdItem" id="inputIdItem" hidden>
+                            </div>
+
+                            <div class="col-lg-12 input-kriteria">
+                                <p>Kriteria belum sesuai data di database</p>
+                                <p>Kriteria:</p>
+                            </div>
+
+                            {% for key, val in list_kriteria.items %}
+                            <div class="col-lg-6 input-kriteria">
+                                <label for="inputAttributItem{{key}}" class="form-label">{{key}}:</label>
+                                <select class="form-select" aria-label="Default select example" id="inputAttributItem{{key}}" name="{{key}}">
+                                    {% for sub in val %}
+                                    <option value="{{sub}}">{{sub}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" form="itemForm" class="btn btn-danger" id="add-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>

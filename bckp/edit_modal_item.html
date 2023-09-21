@@ -1,43 +1,43 @@
 {% load static %}
 
-<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+<div class="modal fade" id="itemModal" tabindex="-1" aria-labelledby="itemModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h1 class="modal-title fs-3" id="registerModalLabel"><strong>Tambah Item</strong></h1>
+                <h1 class="modal-title fs-3" id="itemModalLabel"><strong>Tambah Item</strong></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
-                    <form method="post" id="addItemForm">
+                    <form method="post" id="itemForm">
                         {% csrf_token %}
                         <div class="row g-1">
                             <div class="col-lg-6">
-                                <label for="register-nama" class="form-label">Nama Item:</label>
-                                <input type="text" class="form-control" id="register-nama" name="register-nama" required>
+                                <label for="add-nama" class="form-label">Nama Item:</label>
+                                <input type="text" class="form-control" id="add-nama" name="add-nama" required>
                             </div>
                             <div class="col-lg-6">
-                                <label for="register-kategori" class="form-label">Kategori:</label>
-                                <select class="form-select" aria-label="Default select example" id="register-kategori" name="register-kategori">
+                                <label for="add-kategori" class="form-label">Kategori:</label>
+                                <select class="form-select" aria-label="Default select example" id="add-kategori" name="add-kategori">
                                     <option value="makanan">Makanan</option>
                                     <option value="minuman">Minuman</option>
                                     <option value="snack">Snack</option>
                                 </select>
                             </div>
                             <div class="col-lg-6">
-                                <label for="register-harga" class="form-label">Harga:</label>
-                                <input type="number" class="form-control" id="register-harga" name="register-harga" required>
+                                <label for="add-harga" class="form-label">Harga:</label>
+                                <input type="number" class="form-control" id="add-harga" name="add-harga" required>
                             </div>
                             <div class="col-lg-6">
-                                <label for="register-stok" class="form-label">Kategori:</label>
-                                <select class="form-select" aria-label="Default select example" id="register-stok" name="register-stok">
+                                <label for="add-stok" class="form-label">Kategori:</label>
+                                <select class="form-select" aria-label="Default select example" id="add-stok" name="add-stok">
                                     <option value="tersedia">Tersedia</option>
                                     <option value="tidak tersedia">Tidak tersedia</option>
                                 </select>
                             </div>
                             <div class="col-lg-6">
-                                <label for="register-gambar" class="form-label">Gambar</label>
-                                <input class="form-control" type="file" id="register-gambar" name="register-gambar">
+                                <label for="add-gambar" class="form-label">Gambar</label>
+                                <input class="form-control" type="file" id="add-gambar" name="add-gambar">
                             </div>
 
                             <div class="col-lg-12 mb-3"></div>
@@ -48,8 +48,8 @@
 
                             {% for key, val in list_kriteria.items %}
                             <div class="col-lg-6">
-                                <label for="register-attribut" class="form-label">{{key}}:</label>
-                                <select class="form-select" aria-label="Default select example" id="register-attribut" name="{{key}}">
+                                <label for="add-attribut" class="form-label">{{key}}:</label>
+                                <select class="form-select" aria-label="Default select example" id="add-attribut" name="{{key}}">
                                     {% for sub in val %}
                                     <option value="{{sub}}">{{sub}}</option>
                                     {% endfor %}
@@ -63,7 +63,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
-                <button type="submit" form="addItemForm" class="btn btn-danger" id="register-btn">Tambah</button>
+                <button type="submit" form="itemForm" class="btn btn-danger" id="add-btn">Tambah</button>
             </div>
         </div>
     </div>

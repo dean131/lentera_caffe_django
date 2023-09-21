@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -7,10 +9,7 @@ from category_encoders import OrdinalEncoder
 
 from base.models import Saw, Kriteria, Item, Subkriteria
 from .serializers import (
-    SawModelSerializer, 
     ItemModelSerializer, 
-    KriteriaModelSerializer, 
-    SubkriteriaModelSerializer,
     PertanyaanModelSerializer,
 )
 
@@ -23,7 +22,7 @@ def saw(request):
     kriterias = Kriteria.objects.all()
     kriteria_dict = []
     for kriteria in kriterias:
-        kriteria_dict.append({"nama": str(kriteria.nama_kriteria), "bobot": float(kriteria.bobot), "attribut": str(kriteria.atribut)})
+        kriteria_dict.append({"nama": kriteria.nama_kriteria, "bobot": float(kriteria.bobot), "attribut": kriteria.atribut})
     kriteria_df = pd.DataFrame(kriteria_dict)
 
     # convert model subkriteria to df
@@ -35,14 +34,31 @@ def saw(request):
 
     # convert model saw to df
     saws = Saw.objects.all()
-    saw_dict = []
+    list_saw = [saw.subkriteria.kriteria.nama_kriteria for saw in saws if saw.subkriteria != None]
+    correct_saw = [saw for saw in saws if saw.subkriteria != None]
+    counter = max([list_saw.count(i) for i in list_saw if i != None])
     available_col = []
-    for saw in saws:
-        if saw.subkriteria != None:
-            available_col.append(str(saw.subkriteria.kriteria))
-        saw_dict.append({'alternatif': str(saw.alternatif), 'sub_kriteria' : str(saw.subkriteria)})
+    for key in list(OrderedDict.fromkeys(list_saw)):
+        if key is not None:
+            if list_saw.count(key) == counter:
+                available_col.append(key)
+            if list_saw.count(key) != counter:
+                print(key)
+                for saw in correct_saw:
+                    if saw.subkriteria is not None:
+                        if saw.subkriteria.kriteria.nama_kriteria == key:
+                            correct_saw.remove(saw)
+                            
+    saw_dict = []
+    for saw in correct_saw:
+        if saw.subkriteria is not None:
+            saw_dict.append({'alternatif': saw.alternatif.nama_item, 'sub_kriteria' : saw.subkriteria.nama_subkriteria})
+
+    # for i in correct_saw:
+    #     print(i)
+
     saw_df = pd.DataFrame(saw_dict)
-    saw_df = saw_df[saw_df.sub_kriteria != 'None']
+    saw_df = saw_df[saw_df.sub_kriteria != 'None']    
 
     # gabung subkriteria jadi 1 row per alternatif
     merge_saw_df = saw_df.groupby("alternatif", as_index=False, sort=False).agg({"sub_kriteria": ", ".join})
@@ -161,95 +177,95 @@ def saw(request):
     }, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-def add_kriteria(request):
-    nama_kriteria = request.data.get('nama_kriteria')
-    atribut = request.data.get('atribut')
-    bobot = request.data.get('bobot')
+# @api_view(['POST'])
+# def add_kriteria(request):
+#     nama_kriteria = request.data.get('nama_kriteria')
+#     atribut = request.data.get('atribut')
+#     bobot = request.data.get('bobot')
 
-    cek_kriteria = Kriteria.objects.filter(nama_kriteria=nama_kriteria)
-    if cek_kriteria: return Response({
-        'code': '400',
-        'status': 'BAD_REQUEST',
-        'error': 'Kriteria sudah ada'
-        }, status=status.HTTP_400_BAD_REQUEST)
+#     cek_kriteria = Kriteria.objects.filter(nama_kriteria=nama_kriteria)
+#     if cek_kriteria: return Response({
+#         'code': '400',
+#         'status': 'BAD_REQUEST',
+#         'error': 'Kriteria sudah ada'
+#         }, status=status.HTTP_400_BAD_REQUEST)
 
-    kriteria = Kriteria(
-        nama_kriteria = nama_kriteria,
-        atribut = atribut,
-        bobot = bobot
-    )
-    kriteria_serializer = KriteriaModelSerializer(kriteria)
+#     kriteria = Kriteria(
+#         nama_kriteria = nama_kriteria,
+#         atribut = atribut,
+#         bobot = bobot
+#     )
+#     kriteria_serializer = KriteriaModelSerializer(kriteria)
 
-    list_subkriteria = list(request.data.get('subkriteria'))
-    list_obj_subkriteria = []
-    for subkriteria in list_subkriteria:
-        obj_subkriteria = Subkriteria(
-            kriteria=kriteria,
-            nama_subkriteria=subkriteria
-        )
-        list_obj_subkriteria.append(obj_subkriteria)
-    subkriteria_serializer = SubkriteriaModelSerializer(list_obj_subkriteria, many=True)
+#     list_subkriteria = list(request.data.get('subkriteria'))
+#     list_obj_subkriteria = []
+#     for subkriteria in list_subkriteria:
+#         obj_subkriteria = Subkriteria(
+#             kriteria=kriteria,
+#             nama_subkriteria=subkriteria
+#         )
+#         list_obj_subkriteria.append(obj_subkriteria)
+#     subkriteria_serializer = SubkriteriaModelSerializer(list_obj_subkriteria, many=True)
 
-    alternatifs = Item.objects.all()
-    list_obj_saw = []
-    for alternatif in alternatifs:
-        saw = Saw(
-            alternatif=alternatif,
-            subkriteria=None
-        )
-        list_obj_saw.append(saw)
-    saw_serializer = SawModelSerializer(list_obj_saw, many=True)
+#     alternatifs = Item.objects.all()
+#     list_obj_saw = []
+#     for alternatif in alternatifs:
+#         saw = Saw(
+#             alternatif=alternatif,
+#             subkriteria=None
+#         )
+#         list_obj_saw.append(saw)
+#     saw_serializer = SawModelSerializer(list_obj_saw, many=True)
 
-    # save kriteria object 
-    kriteria.save()
-    # save subkriteria objects
-    for subkriteria in list_obj_subkriteria:
-        subkriteria.save()
-    # save saw objects
-    for saw in list_obj_saw:
-        saw.save()
+#     # save kriteria object 
+#     kriteria.save()
+#     # save subkriteria objects
+#     for subkriteria in list_obj_subkriteria:
+#         subkriteria.save()
+#     # save saw objects
+#     for saw in list_obj_saw:
+#         saw.save()
 
-    return Response({
-        'code': '201',
-        'status': 'CREATED',
-    }, status=status.HTTP_201_CREATED)
+#     return Response({
+#         'code': '201',
+#         'status': 'CREATED',
+#     }, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST'])
-def add_item(request):
-    nama_item = request.data.get('nama_item')
-    kategori = request.data.get('kategori')
-    harga = request.data.get('harga')
+# @api_view(['POST'])
+# def add_item(request):
+#     nama_item = request.data.get('nama_item')
+#     kategori = request.data.get('kategori')
+#     harga = request.data.get('harga')
 
-    cek_item = Item.objects.filter(nama_item=nama_item)
-    if cek_item: return Response({
-        'code': '400',
-        'status': 'BAD_REQUEST',
-        'error': 'Item sudah ada'
-    }, status=status.HTTP_400_BAD_REQUEST)
+#     cek_item = Item.objects.filter(nama_item=nama_item)
+#     if cek_item: return Response({
+#         'code': '400',
+#         'status': 'BAD_REQUEST',
+#         'error': 'Item sudah ada'
+#     }, status=status.HTTP_400_BAD_REQUEST)
 
-    alternatif = Item(nama_item=nama_item, kategori=kategori, harga=harga)
+#     alternatif = Item(nama_item=nama_item, kategori=kategori, harga=harga)
 
-    list_subkriteria = list(request.data.get('subkriteria'))
-    list_obj_saw = []
-    for subkriteria in list_subkriteria:
-        saw = Saw(
-            alternatif=alternatif,
-            subkriteria=Subkriteria.objects.get(id=subkriteria),
-        )
-        list_obj_saw.append(saw)
+#     list_subkriteria = list(request.data.get('subkriteria'))
+#     list_obj_saw = []
+#     for subkriteria in list_subkriteria:
+#         saw = Saw(
+#             alternatif=alternatif,
+#             subkriteria=Subkriteria.objects.get(id=subkriteria),
+#         )
+#         list_obj_saw.append(saw)
 
-    # save alternatif objects
-    alternatif.save()
-    # save saw objects
-    for saw in list_obj_saw:
-        saw.save()
+#     # save alternatif objects
+#     alternatif.save()
+#     # save saw objects
+#     for saw in list_obj_saw:
+#         saw.save()
     
-    return Response({
-        'code': '201',
-        'status': 'CREATED'
-    }, status=status.HTTP_201_CREATED)
+#     return Response({
+#         'code': '201',
+#         'status': 'CREATED'
+#     }, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET'])

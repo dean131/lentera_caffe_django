@@ -23,8 +23,8 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Kriteria</th>
                             <th>Subkriteria</th>
+                            <th>Kriteria</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -32,8 +32,8 @@
                         {% for sub in subkriterias %}
                         <tr>
                             <td>{{sub.id}}</td>
-                            <td>{{sub.kriteria}}</td>
                             <td>{{sub.nama_subkriteria}}</td>
+                            <td>{{sub.kriteria}}</td>
                             <td class="d-flex justify-content-around">
                                 <button type="button" class="btn btn-warning edit-table-btn"  data-bs-toggle="modal" data-bs-target="#editModal">
                                     <i class="fa-solid fa-pen-to-square"></i>
@@ -49,8 +49,6 @@
             </div>
         </div>
     </div>
-
-    {% include 'components/edit_modal_item.html' %}
 
     {% include 'components/delete_modal.html' %}
 

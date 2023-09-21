@@ -7,8 +7,9 @@
         <h1 class="h3 mb-0 text-gray-800"><strong>Data Menu</strong></h1>
     </div>
 
+    <!-- Add Button  -->
     <div class="mb-3">
-        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#registerModal">
+        <button type="button" class="btn btn-danger btn-add" data-bs-toggle="modal" data-bs-target="#itemModal">
             <i class="fa-solid fa-plus"></i>
             Tambahkan
         </button>
@@ -44,10 +45,10 @@
                                 <img width="50" height="50" src="https://img.kurio.network/_Ebs2rDtquiA4Cf2zJljDmjneq8=/440x440/filters:quality(80)/https://kurio-img.kurioapps.com/21/02/24/4f99af33-b3c1-47cd-a219-f1a5289f8b29.jpe" class="rounded">
                             </td>
                             <td class="d-flex justify-content-around">
-                                <button type="button" class="btn btn-warning edit-table-btn"  data-bs-toggle="modal" data-bs-target="#editModal">
+                                <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#itemModal">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger btn-delete" data-bs-whatever="{{menu}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <button type="button" class="btn btn-danger btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -59,9 +60,7 @@
         </div>
     </div>
 
-    {% include 'components/add_modal_item.html' %}
-
-    {% include 'components/edit_modal_item.html' %}
+    {% include 'components/modal_item.html' %}
 
     {% include 'components/delete_modal.html' %}
 
@@ -74,34 +73,44 @@
             $('.menu-nav-item').addClass('active');
             $('.items-nav-item').addClass('active');
 
-            var frm = document.getElementById('deleteForm');
-            if(frm) {
-                frm.action = '/admin/delete-item/' 
-            }
-
-
-            $('.edit-table-btn').on('click', function() {
-                var row = $(this).closest('tr');
-                var id = row.find('td:eq(0)').text();
-                var name = row.find('td:eq(1)').text();
-                var category = row.find('td:eq(2)').text();
-                var price = row.find('td:eq(3)').text();
-                // var rating = row.find('td:eq(4)').text();
-                var stock = row.find('td:eq(5)').text();
-                // var picture = row.find('td:eq(6)').text();
-
-                document.getElementById('edit-name').value = name;
-                document.getElementById('edit-category').value = category;
-                document.getElementById('edit-price').value = price;
-                document.getElementById('edit-stock').value = stock;
+            const csrf_token = '{{csrf_token}}';
+            
+            // add function
+            $('.btn-add').on('click', function() {
+                $('#itemModalLabel').html('<strong>Tambah Item</strong>');
+                $('input').val('');
+                document.getElementById('itemForm').action = '{% url "add_item" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
             });
-
-
+            
+            // edit function 
             var table = $('#dataTable').DataTable();
             var row_data;
-            $('#dataTable tbody').on( 'click', 'button', function () {
+            $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                $('#itemModalLabel').html('<strong>Edit Item</strong>');
+
+                // get data from row 
+                row_data = table.row($(this).parents('tr') ).data();
+                $('#inputIdItem').val(row_data[0]);
+                $('#inputNamaItem').val(row_data[1]);
+                $('#inputKategoriItem').val(row_data[2]);
+                $('#inputHargaItem').val(parseInt(row_data[3].match(/\d+/)));
+                $('#inputStokItem').val(row_data[5]);
+
+                document.getElementById('itemForm').action = '{% url "edit_item" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+            });
+
+            // delete function 
+            $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                $('#deleteModalLabel').html('<strong>Delete Item</strong>');
+                // get data from row 
                 row_data = table.row( $(this).parents('tr') ).data();
                 $('#inputId').val(row_data[0]);
+                console.log(row_data[0]);
+
+                document.getElementById('deleteForm').action = '{% url "delete_item" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
             });
 
         });
