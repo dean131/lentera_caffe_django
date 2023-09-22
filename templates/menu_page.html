@@ -42,7 +42,7 @@
                             <td>{{menu.nilai}}</td>
                             <td>{{menu.stok}}</td>
                             <td class="text-center">
-                                <img width="50" height="50" src="https://img.kurio.network/_Ebs2rDtquiA4Cf2zJljDmjneq8=/440x440/filters:quality(80)/https://kurio-img.kurioapps.com/21/02/24/4f99af33-b3c1-47cd-a219-f1a5289f8b29.jpe" class="rounded">
+                                <img width="100px" {% if menu.gambar %} src="{{menu.gambar}}" {% else %} src="https://placehold.co/100" {% endif %} class="rounded" alt="Tidak ada gambar">
                             </td>
                             <td class="d-flex justify-content-around">
                                 <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#itemModal">
@@ -112,7 +112,6 @@
                 document.getElementById('deleteForm').action = '{% url "delete_item" %}';
                 $('[name="csrfmiddlewaretoken"]').val(csrf_token);
             });
-
         });
     </script>
 {% endblock %}

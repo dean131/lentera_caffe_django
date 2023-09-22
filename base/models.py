@@ -65,7 +65,7 @@ class Item(models.Model):
     nama_item = models.CharField(max_length=50)
     kategori = models.CharField(max_length=20)
     harga = models.IntegerField()
-    gambar = models.ImageField(null=True, blank=True)
+    gambar = models.ImageField(null=True, blank=True, upload_to='images/')
     stok = models.CharField(max_length=20, default='tidak tersedia')
     nilai = models.IntegerField(default=0)
     jumlah_bintang = models.IntegerField(default=0)

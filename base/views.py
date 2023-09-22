@@ -1,5 +1,6 @@
-from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
 
 from .models import Item, Saw, Kriteria, Subkriteria
 
@@ -7,6 +8,10 @@ import json
 from django.shortcuts import HttpResponse
 
 def login(request):
+    # if request.method == 'POST':
+    #     username = request.POST["username"]
+    #     password = request.POST["password"]
+    #     user = 
     return render(request, 'login.html')
 
 def dashboard(request):
@@ -68,7 +73,6 @@ def add_item(request):
             messages.error(
                 request=request, 
                 message='Nama menu sudah terdaftar!', 
-                extra_tags='danger'
             )
             return redirect('menu_page')
 
@@ -92,10 +96,9 @@ def add_item(request):
 
         for saw in list_obj_saw:
             saw.save()
-        messages.error(
+        messages.success(
                 request=request, 
                 message='Succes menambahkan item baru!', 
-                extra_tags='success'
         )
         return redirect('menu_page')
     
@@ -106,14 +109,13 @@ def edit_item(request):
         kategori = request.POST.get('inputKategoriItem')
         harga = request.POST.get('inputHargaItem')
         stok = request.POST.get('inputStokItem')
-        gambar = request.POST.get('inputGambarItem')
+        gambar = request.FILES.get('inputGambarItem')
 
         cek_item = Item.objects.filter(nama_item=nama)
         if cek_item and (cek_item[0].id != int(item_id)):
             messages.error(
                 request=request, 
                 message='Nama menu sudah terdaftar!', 
-                extra_tags='danger'
             )
             return redirect('menu_page')
 
@@ -140,7 +142,6 @@ def edit_item(request):
         messages.success(
                 request=request, 
                 message='Succes mengupdate item!', 
-                extra_tags='success'
         )
         return redirect('menu_page')
 
@@ -155,7 +156,6 @@ def delete_item(request):
         messages.success(
                 request=request, 
                 message='Succes menghapus item!', 
-                extra_tags='success'
         )
     return redirect('menu_page')
 
@@ -167,19 +167,6 @@ def saw_page(request):
         'saws': saws
     }
     return render(request, 'saw_page.html', context)
-
-def edit_saw(request):
-    item_id = request.POST.get('inputIdItem')
-    nama = request.POST.get('inputNamaItem')
-    kategori = request.POST.get('inputKategoriItem')
-
-    messages.success(
-                request=request, 
-                message='Succes mengupdate saw!', 
-                extra_tags='success'
-        )
-    return redirect('menu_page')
-
 
 # ===== KRITERIA VIEWS =====
 def kriteria_page(request):
@@ -231,12 +218,11 @@ def add_kriteria(request):
     messages.success(
             request=request, 
             message='Succes mengupdate saw!', 
-            extra_tags='success'
     )
     return redirect('kriteria_page')
 
 def edit_kriteria(request):
-    # FUTURE WORK
+    
     return redirect('kriteria_page')
 
 def delete_kriteria(request):
@@ -262,7 +248,6 @@ def delete_kriteria(request):
         messages.success(
                 request=request, 
                 message='Succes menghapus kriteria!', 
-                extra_tags='success'
         )
     return redirect('kriteria_page')
 
