@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class="modal fade" id="subkriteriaModal" tabindex="-1" aria-labelledby="subkriteriaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h1 class="modal-title fs-3" id="subkriteriaModalLabel"><strong>Tambah Kriteria</strong></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <form method="post" id="subkriteriaForm">
+                        {% csrf_token %}
+                        <div class="row g-1">
+                            <div class="col-lg-6">
+                                <label for="inputNamaKriteria" class="form-label">Kriteria:</label>
+                                <select class="form-select" aria-label="Default select example" id="inputNamaKriteria" name="inputNamaKriteria">
+                                    {% for kriteria in kriterias %}
+                                    <option value="{{kriteria}}">{{kriteria}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="inputNamaSubkriteria" class="form-label">Nama subkriteria:</label>
+                                <input type="text" class="form-control" id="inputNamaSubkriteria" name="inputNamaSubkriteria">
+                            </div>
+                            <div hidden>
+                                <input type="text" name="inputIdKriteria" id="inputIdKriteria">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" form="subkriteriaForm" class="btn btn-danger" id="register-btn">Tambah</button>
+            </div>
+        </div>
+    </div>
+</div>

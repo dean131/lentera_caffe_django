@@ -30,14 +30,14 @@
                     </div>
                     <div class="mb-2">
                         <label for="exampleInputEmail1" class="form-label text-xs">EMAIL</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
                     </div>
                     <div class="mb-4">
                         <label for="exampleInputPassword1" class="form-label text-xs">PASSWORD</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1">
+                        <input type="password" class="form-control" id="exampleInputPassword1" name="password">
                     </div>
                     <div class="d-grid">
-                        <a href="{% url 'dashboard' %}" class="btn bg-danger text-white btn-block btn-login">Masuk</a>
+                        <a href="{% url 'login' %}" class="btn bg-danger text-white btn-block btn-login">Masuk</a>
                     </div>
                 </div>
             </div>

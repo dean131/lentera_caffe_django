@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 
 from .models import Item, Saw, Kriteria, Subkriteria
@@ -8,12 +9,16 @@ import json
 from django.shortcuts import HttpResponse
 
 def login(request):
-    # if request.method == 'POST':
-    #     username = request.POST["username"]
-    #     password = request.POST["password"]
-    #     user = 
+    if request.method == 'POST':
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return redirect('dashboard')
     return render(request, 'login.html')
 
+@login_required(login_url='login/')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
@@ -217,12 +222,28 @@ def add_kriteria(request):
 
     messages.success(
             request=request, 
-            message='Succes mengupdate saw!', 
+            message='Succes menambah kriteria!', 
     )
     return redirect('kriteria_page')
 
 def edit_kriteria(request):
-    
+    id_kriteria = request.POST.get('inputIdKriteria')
+    nama_kriteria = request.POST.get('inputNamaKriteria')
+    atribut = request.POST.get('inputAttribut')
+    bobot = request.POST.get('inputBobot')
+    pertanyaan = request.POST.get('inputPertanyaan')
+
+    Kriteria.objects.filter(id=id_kriteria).update(
+        nama_kriteria = nama_kriteria,
+        atribut=atribut,
+        bobot=float(bobot),
+        pertanyaan=pertanyaan
+    )
+
+    messages.success(
+        request=request, 
+        message='Succes mengupdate kriteria!', 
+    )
     return redirect('kriteria_page')
 
 def delete_kriteria(request):
@@ -246,18 +267,88 @@ def delete_kriteria(request):
         kriteria.delete()
 
         messages.success(
-                request=request, 
-                message='Succes menghapus kriteria!', 
+            request=request, 
+            message='Succes menghapus kriteria!', 
         )
     return redirect('kriteria_page')
 
 # ===== SUBKRITERIA =====
 def subkriteria_page(request):
     subkriterias = Subkriteria.objects.all()
+    kriterias = Kriteria.objects.all()
     context = {
-        'subkriterias': subkriterias
+        'subkriterias': subkriterias,
+        'kriterias': kriterias 
     }
     return render(request, 'subkriteria_page.html', context)
+
+def add_subkriteria(request):
+    nama_subkriteria = request.POST.get('inputNamaSubkriteria')
+    nama_kriteria = request.POST.get('inputNamaKriteria')
+
+    kriteria = Kriteria.objects.filter(nama_kriteria=nama_kriteria).first()
+
+    subkriteria, created = Subkriteria.objects.get_or_create(
+        nama_subkriteria=nama_subkriteria,
+        kriteria=kriteria
+    )
+    if created:
+        messages.success(
+            request=request, 
+            message='Berhasil menambah subkriteria!', 
+        )
+    else:
+        messages.error(
+            request=request, 
+            message='Subkriteria telah ditambah sebelumnya!', 
+        )
+    
+    return redirect('subkriteria_page')
+
+def edit_subkriteria(request):
+    subkriteria_id = request.POST.get('inputIdKriteria')
+    nama_subkriteria = request.POST.get('inputNamaSubkriteria')
+    nama_kriteria = request.POST.get('inputNamaKriteria')
+
+    kriteria = Kriteria.objects.filter(nama_kriteria=nama_kriteria).first()
+
+    # cek duplikasi data 
+    existing_subkriteria = Subkriteria.objects.filter(nama_subkriteria=nama_subkriteria).exclude(id=subkriteria_id)
+    if existing_subkriteria:
+        messages.error(
+            request=request,
+            message='Nama subkriteria sudah ada.',
+        )
+        return redirect('subkriteria_page')
+
+    Subkriteria.objects.filter(id=subkriteria_id).update(
+        nama_subkriteria=nama_subkriteria,
+        kriteria=kriteria
+    )   
+
+    messages.success(
+        request=request, 
+        message=f'Subkriteria "{nama_subkriteria}" berhasil diperbarui!', 
+    )
+    return redirect('subkriteria_page')
+
+def delete_subkriteria(request):
+    subkriteria_id = request.POST['id']
+    subkriteria = Subkriteria.objects.get(id=subkriteria_id)
+
+    # menghapus objects saw yang berhubungan dengan subkriteria
+    saws = Saw.objects.filter(subkriteria=subkriteria)
+    for saw in saws:
+        saw.subkriteria = None
+        saw.save()
+
+    subkriteria.delete()
+
+    messages.success(
+            request=request, 
+            message=f'Behasil menghapus subkriteria {subkriteria.nama_subkriteria}.', 
+    )
+    return redirect('subkriteria_page')
 
 
 

@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 
+
 urlpatterns = [
     path('login/', views.login, name='login'),
     path('', views.dashboard, name='dashboard'),
@@ -27,4 +28,7 @@ urlpatterns = [
     path('saw-page/', views.saw_page, name='saw_page'),
 
     path('subkriteria-page/', views.subkriteria_page, name='subkriteria_page'),
+    path('add_subkriteria/', views.add_subkriteria, name='add_subkriteria'),
+    path('edit_subkriteria/', views.edit_subkriteria, name='edit_subkriteria'),
+    path('delete_subkriteria/', views.delete_subkriteria, name='delete_subkriteria'),
 ]

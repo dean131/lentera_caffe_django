@@ -9,7 +9,7 @@
     </div>
 
     <div class="mb-3">
-        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#registerModal">
+        <button type="button" class="btn btn-danger btn-add" data-bs-toggle="modal" data-bs-target="#subkriteriaModal">
             <i class="fa-solid fa-plus"></i>
             Tambahkan
         </button>
@@ -35,10 +35,10 @@
                             <td>{{sub.nama_subkriteria}}</td>
                             <td>{{sub.kriteria}}</td>
                             <td class="d-flex justify-content-around">
-                                <button type="button" class="btn btn-warning edit-table-btn"  data-bs-toggle="modal" data-bs-target="#editModal">
+                                <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#subkriteriaModal">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <button type="button" class="btn btn-danger btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -51,6 +51,7 @@
     </div>
 
     {% include 'components/delete_modal.html' %}
+    {% include 'components/modal_subkriteria.html' %}
 
 {% endblock %}
 
@@ -61,22 +62,44 @@
             $('.menu-nav-item').addClass('active');
             $('.subkriteria-nav-item').addClass('active');
 
+            const csrf_token = '{{csrf_token}}';
+            
+            // add function
+            $('.btn-add').on('click', function() {
+                $('#subkriteriaModalLabel').html('<strong>Tambah Subkriteria</strong>');
+                $('input').val('');
+                document.getElementById('subkriteriaForm').action = '{% url "add_subkriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+            });
 
-            // $('.edit-table-btn').on('click', function() {
-            //     var row = $(this).closest('tr');
-            //     var id = row.find('td:eq(0)').text();
-            //     var name = row.find('td:eq(1)').text();
-            //     var category = row.find('td:eq(2)').text();
-            //     var price = row.find('td:eq(3)').text();
-            //     // var rating = row.find('td:eq(4)').text();
-            //     var stock = row.find('td:eq(5)').text();
-            //     // var picture = row.find('td:eq(6)').text();
+            var table = $('#dataTable').DataTable();
+            var row_data;
 
-            //     document.getElementById('edit-name').value = name;
-            //     document.getElementById('edit-category').value = category;
-            //     document.getElementById('edit-price').value = price;
-            //     document.getElementById('edit-stock').value = stock;
-            // });
+            // edit function 
+            $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                $('#subkriteriaModalLabel').html('<strong>Edit Subkriteria</strong>');
+
+                // get data from row 
+                row_data = table.row($(this).parents('tr') ).data();
+                $('#inputIdKriteria').val(row_data[0]);
+                $('#inputNamaKriteria').val(row_data[2]);
+                $('#inputNamaSubkriteria').val(row_data[1]);
+
+                document.getElementById('subkriteriaForm').action = '{% url "edit_subkriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+            });
+
+            // delete function 
+            $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                $('#deleteModalLabel').html('<strong>Delete Subkriteria</strong>');
+                // get data from row 
+                row_data = table.row( $(this).parents('tr') ).data();
+                $('#inputId').val(row_data[0]);
+                console.log(row_data[0]);
+
+                document.getElementById('deleteForm').action = '{% url "delete_subkriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+            });
         });
     </script>
 {% endblock %}

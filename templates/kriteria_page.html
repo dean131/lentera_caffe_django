@@ -71,6 +71,7 @@
 
             $('.btn-add').on('click', function() {
                 $('#kriteriaModalLabel').html('<strong>Tambah Kriteria</strong>');
+                $('.textarea-subkriteria').show()
                 $('input').val('')
                 document.getElementById('kriteriaForm').action = '{% url "add_kriteria" %}';
                 $('[name="csrfmiddlewaretoken"]').val(csrf_token);
@@ -78,11 +79,14 @@
 
             var table = $('#dataTable').DataTable();
             var row_data;
-            $('.btn-edit').on('click', function() {
-                $('#kriteriaModalLabel').html('<strong>Edit Kriteria</strong>');
 
+            // edit function 
+            $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                $('#kriteriaModalLabel').html('<strong>Edit Kriteria</strong>');
+                $('.textarea-subkriteria').hide()
                 // get data from row 
                 row_data = table.row($(this).parents('tr') ).data();
+                $('#inputIdKriteria').val(row_data[0]);
                 $('#inputNamaKriteria').val(row_data[1]);
                 $('#inputPertanyaan').val(row_data[2]);
                 $('#inputBobot').val(parseFloat(row_data[3]));
@@ -90,12 +94,13 @@
 
                 document.getElementById('kriteriaForm').action = '{% url "edit_kriteria" %}';
                 $('[name="csrfmiddlewaretoken"]').val(csrf_token);
-            });
+            }); 
 
-            $('.btn-delete').on('click', function() {
+            // delete function 
+            $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                $('#deleteModalLabel').html('<strong>Delete Kriteria</strong>');
                 // get data from row 
-                row_data = table.row($(this).parents('tr') ).data();
-                console.log(row_data[0])
+                row_data = table.row( $(this).parents('tr') ).data();
                 $('#inputId').val(row_data[0]);
 
                 document.getElementById('deleteForm').action = '{% url "delete_kriteria" %}';
