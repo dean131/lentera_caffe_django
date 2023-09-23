@@ -28,10 +28,10 @@
                             <td>Tiga@gmail.com</td>
                             <td>0812432424</td>
                             <td class="d-flex justify-content-around">
-                                <button type="button" class="btn btn-warning edit-table-btn"  data-bs-toggle="modal" data-bs-target="#editModal">
+                                <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#modalUser">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <button type="button" class="btn btn-danger btn-delete" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    {% include 'components/edit_modal_users.html' %}
+    {% include 'components/modal_user.html' %}
     
     {% include 'components/delete_modal.html' %}
 

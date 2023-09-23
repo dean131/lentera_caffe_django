@@ -30,28 +30,44 @@
                             <th>Stok</th>
                             <th>Gambar</th>
                             <th>Aksi</th>
+
+                            {% for krit in list_item.0.kriterias %}
+                            <th hidden>
+                                {{krit.keys}}
+                            </th>
+                            {% endfor %}
+
                         </tr>
                     </thead>
                     <tbody>
-                        {% for menu in menus %}
+                        {% for item in list_item %}
                         <tr>
-                            <td>{{menu.id}}</td>
-                            <td>{{menu.nama_item}}</td>
-                            <td>{{menu.kategori}}</td>
-                            <td>Rp{{menu.harga}}</td>
-                            <td>{{menu.nilai}}</td>
-                            <td>{{menu.stok}}</td>
+                            <td>{{item.id}}</td>
+                            <td>{{item.nama_item}}</td>
+                            <td>{{item.kategori}}</td>
+                            <td>Rp{{item.harga}}</td>
+                            <td>{{item.nilai}}</td>
+                            <td>{{item.stok}}</td>
                             <td class="text-center">
-                                <img width="100px" {% if menu.gambar %} src="{{menu.gambar}}" {% else %} src="https://placehold.co/100" {% endif %} class="rounded" alt="Tidak ada gambar">
+                                <img width="100px" {% if item.gambar %} src="{{item.gambar.url}}" {% else %} src="https://placehold.co/100" {% endif %} class="rounded" alt="Tidak ada gambar">
                             </td>
                             <td class="d-flex justify-content-around">
-                                <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#itemModal">
+                                <button type="button" class="btn btn-warning btn-edit" data-bs-toggle="modal" data-bs-target="#itemModal">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
                                 <button type="button" class="btn btn-danger btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
+                            
+                            {% for krit in item.kriterias %}
+                                {% for key, val in krit.items %}
+                                    <td hidden>
+                                        {{val}}
+                                    </td>
+                                {% endfor %}
+                            {% endfor %}
+
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -69,7 +85,7 @@
 {% block script %}
     <script>
         $(document).ready(function () {
-            $('#collapseMenus').collapse('show');
+            $('#collapseMenu').collapse('show');
             $('.menu-nav-item').addClass('active');
             $('.items-nav-item').addClass('active');
 
@@ -77,40 +93,42 @@
             
             // add function
             $('.btn-add').on('click', function() {
-                $('#itemModalLabel').html('<strong>Tambah Item</strong>');
-                $('input').val('');
                 document.getElementById('itemForm').action = '{% url "add_item" %}';
                 $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+                $('#itemModalLabel').html('<strong>Tambah Item</strong>');
+                $('input').val('');
             });
             
-            // edit function 
             var table = $('#dataTable').DataTable();
             var row_data;
+            
+            // edit function 
             $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                document.getElementById('itemForm').action = '{% url "edit_item" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#itemModalLabel').html('<strong>Edit Item</strong>');
-
                 // get data from row 
-                row_data = table.row($(this).parents('tr') ).data();
-                $('#inputIdItem').val(row_data[0]);
+                row_data = table.row($(this).parents('tr')).data();
+                $('#inputItemId').val(row_data[0]);
                 $('#inputNamaItem').val(row_data[1]);
                 $('#inputKategoriItem').val(row_data[2]);
                 $('#inputHargaItem').val(parseInt(row_data[3].match(/\d+/)));
                 $('#inputStokItem').val(row_data[5]);
-
-                document.getElementById('itemForm').action = '{% url "edit_item" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+                // fill select element modal with data from hidden column row 
+                var formSelectKriteria = $('.form-select-kriteria')
+                for (let i = 0; i < formSelectKriteria.length; i++) {
+                    formSelectKriteria[i].value = row_data[8+i]
+                }
             });
 
             // delete function 
             $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                document.getElementById('deleteForm').action = '{% url "delete_item" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#deleteModalLabel').html('<strong>Delete Item</strong>');
                 // get data from row 
                 row_data = table.row( $(this).parents('tr') ).data();
-                $('#inputId').val(row_data[0]);
-                console.log(row_data[0]);
-
-                document.getElementById('deleteForm').action = '{% url "delete_item" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+                $('#inputDeleteId').val(row_data[0]);
             });
         });
     </script>

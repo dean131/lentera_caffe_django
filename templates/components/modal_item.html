@@ -42,7 +42,7 @@
                             </div>
 
                             <div class="col-lg-12 mb-3">
-                                <input type="text" name="inputIdItem" id="inputIdItem" hidden>
+                                <input type="text" name="inputItemId" id="inputItemId" hidden>
                             </div>
 
                             <div class="col-lg-12 input-kriteria">
@@ -50,15 +50,17 @@
                                 <p>Kriteria:</p>
                             </div>
 
-                            {% for key, val in list_kriteria.items %}
-                            <div class="col-lg-6 input-kriteria">
-                                <label for="inputAttributItem{{key}}" class="form-label">{{key}}:</label>
-                                <select class="form-select" aria-label="Default select example" id="inputAttributItem{{key}}" name="{{key}}">
-                                    {% for sub in val %}
-                                    <option value="{{sub}}">{{sub}}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
+                            {% for krit in list_kriteria %}
+                                {% for key, val in krit.items %}
+                                <div class="col-lg-6 input-kriteria">
+                                    <label for="inputKriteriaItem{{key}}" class="form-label">{{key}}:</label>
+                                    <select class="form-select form-select-kriteria" aria-label="Default select example" id="inputKriteriaItem{{key}}" name="{{key}}" required>
+                                        {% for sub in val %}
+                                        <option value="{{sub}}">{{sub}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                {% endfor %}
                             {% endfor %}
 
                         </div>

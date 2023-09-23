@@ -17,15 +17,21 @@
                         <tr>
                             <th>Id</th>
                             <th>Nama Item</th>
-                            <th>Subriteria</th>
+                            <th>Subkriteria</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for saw in saws %}
                         <tr>
                             <td>{{saw.id}}</td>
-                            <td>{{saw.alternatif}}</td>
-                            <td>{{saw.subkriteria}}</td>
+                            <td>{{saw.nama_item}}</td>
+                            <td>
+                                {% for sub in saw.subkriterias %}
+                                    {% for key, val in sub.items %}
+                                    <p {% if val is None %}class="subkriteria-none"{% endif %}>{{key}}: {{val}}</p>
+                                    {% endfor %}
+                                {% endfor %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -41,7 +47,7 @@
 {% block script %}
     <script>
         $(document).ready(function () {
-            $('#collapseMenus').collapse('show');
+            $('#collapseMenu').collapse('show');
             $('.menu-nav-item').addClass('active');
             $('.saw-nav-item').addClass('active');
         });

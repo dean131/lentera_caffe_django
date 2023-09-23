@@ -5,66 +5,101 @@ from django.shortcuts import redirect, render
 
 from .models import Item, Saw, Kriteria, Subkriteria
 
+from .serializers import MenuModelSerializer, SawModelSerializer
+
 import json
 from django.shortcuts import HttpResponse
 
-def login(request):
+def login_user(request):
     if request.method == 'POST':
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(username=username, password=password)
+        email = request.POST["inputEmail"]
+        password = request.POST["inputPassword"]
+        user = authenticate(email=email, password=password)
+        print(user)
         if user:
             login(request, user)
             return redirect('dashboard')
     return render(request, 'login.html')
 
-@login_required(login_url='login/')
+# @login_required(login_url='login/')
 def dashboard(request):
     return render(request, 'dashboard.html')
 
+# @login_required(login_url='login/')
 def customers_page(request):
     return render(request, 'customers_page.html')
 
+# @login_required(login_url='login/')
 def cashier_page(request):
     return render(request, 'cashier_page.html')
 
+# @login_required(login_url='login/')
 def admin_page(request):
     return render(request, 'admin_page.html')
 
+# @login_required(login_url='login/')
 def order_page(request):
     return render(request, 'order_page.html')
 
+# @login_required(login_url='login/')
 def cart_page(request):
     return render(request, 'cart_page.html')
 
+# @login_required(login_url='login/')
 def notification_page(request):
     return render(request, 'notification_page.html')
 
 
 # ===== ITEM VIEWS =====
-def menu_page(request):
-    menus = Item.objects.all()
+# @login_required(login_url='login/')
+def item_page(request):
+    items = Item.objects.all()
+    list_item = []
+    for item in items:
+        item_obj = {}
+        item_obj['id'] = item.id
+        item_obj['nama_item'] = item.nama_item
+        item_obj['kategori'] = item.kategori
+        item_obj['harga'] = item.harga
+        item_obj['gambar'] = item.gambar
+        item_obj['stok'] = item.stok
+        item_obj['nilai'] = item.nilai
+        item_obj['kriterias'] = []
+
+        kriterias = Kriteria.objects.all()
+
+        saws = item.saw_set.all()
+        for i, saw in enumerate(saws):
+            item_obj['kriterias'].append({kriterias[i].nama_kriteria: saw.subkriteria.nama_subkriteria if saw.subkriteria is not None else None})
+
+        list_item.append(item_obj)
+
+    # return HttpResponse(json.dumps(list_item))
+
+    # list_kriteria = {}
+    # for kriteria in kriterias:
+    #     subs = Subkriteria.objects.filter(kriteria=kriteria)
+    #     list_subs = []
+    #     for sub in subs:
+    #         list_subs.append(sub.nama_subkriteria)
+    #     list_kriteria.update({f'{kriteria.nama_kriteria}': list_subs})
+
+
     kriterias = Kriteria.objects.all()
-
-    list_kriteria = {}
+    list_kriteria = []
     for kriteria in kriterias:
-        subs = Subkriteria.objects.filter(kriteria=kriteria)
-        list_subs = []
-        for sub in subs:
-            list_subs.append(sub.nama_subkriteria)
-        list_kriteria.update({f'{kriteria.nama_kriteria}': list_subs})
+        sub_by_krit = {}
+        sub_by_krit[kriteria.nama_kriteria] = [sub.nama_subkriteria for sub in kriteria.subkriteria_set.all()]
+        list_kriteria.append(sub_by_krit)
 
-    from .serializers import MenuModelSerializer
-    menus_serializer = MenuModelSerializer(menus, many=True)
-
-    # return HttpResponse(json.dumps(menus_serializer.data))
     
     context = {
-        'menus': menus_serializer.data,
+        'list_item': list_item,
         'list_kriteria': list_kriteria
     }
-    return render(request, 'menu_page.html', context)
+    return render(request, 'item_page.html', context)
 
+# @login_required(login_url='login/')
 def add_item(request):
     if request.method == 'POST':
         nama = request.POST.get('inputNamaItem')
@@ -73,15 +108,15 @@ def add_item(request):
         stok = request.POST.get('inputStokItem')
         gambar = request.POST.get('inputGambarItem')
 
-        cek_item = Item.objects.filter(nama_item=nama)
-        if cek_item:
+        existing_item = Item.objects.filter(nama_item=nama)
+        if existing_item.exists():
             messages.error(
                 request=request, 
-                message='Nama menu sudah terdaftar!', 
+                message=f'Nama menu "{nama}" sudah ada.', 
             )
-            return redirect('menu_page')
+            return redirect('item_page')
 
-        item = Item(nama_item=nama, kategori=kategori, harga=harga, stok=stok, gambar=gambar)
+        item = Item.objects.create(nama_item=nama, kategori=kategori, harga=harga, stok=stok, gambar=gambar)
 
         kriterias = Kriteria.objects.all()
         list_subs = []
@@ -89,42 +124,38 @@ def add_item(request):
             sub = request.POST.get(kriteria.nama_kriteria)
             list_subs.append(sub)
 
-        list_obj_saw = []
         for subkriteria in list_subs:
-            saw = Saw(
+            Saw.objects.create(
                 alternatif=item,
-                subkriteria=Subkriteria.objects.get(nama_subkriteria=subkriteria),
+                subkriteria=Subkriteria.objects.get(nama_subkriteria=subkriteria)
             )
-            list_obj_saw.append(saw)
 
-        item.save()
-
-        for saw in list_obj_saw:
-            saw.save()
         messages.success(
                 request=request, 
-                message='Succes menambahkan item baru!', 
+                message=f'Item "{item.nama_item}" berhasil ditambahkan.', 
         )
-        return redirect('menu_page')
+        return redirect('item_page')
     
+# @login_required(login_url='login/')
 def edit_item(request):
     if request.method == 'POST':
-        item_id = request.POST.get('inputIdItem')
+        item_id = request.POST.get('inputItemId')
         nama = request.POST.get('inputNamaItem')
         kategori = request.POST.get('inputKategoriItem')
         harga = request.POST.get('inputHargaItem')
         stok = request.POST.get('inputStokItem')
         gambar = request.FILES.get('inputGambarItem')
 
-        cek_item = Item.objects.filter(nama_item=nama)
-        if cek_item and (cek_item[0].id != int(item_id)):
+        existing_item = Item.objects.filter(nama_item=nama).exclude(id=item_id)
+        if existing_item.exists():
             messages.error(
                 request=request, 
-                message='Nama menu sudah terdaftar!', 
+                message=f'Nama menu "{nama}" sudah ada!', 
             )
-            return redirect('menu_page')
-
+            return redirect('item_page')
+        
         item = Item.objects.get(id=item_id)
+        
         item.nama_item = nama
         item.kategori = kategori
         item.harga = harga
@@ -133,7 +164,6 @@ def edit_item(request):
         item.save()
 
         kriterias = Kriteria.objects.all()
-        
         subs_dict = []
         for kriteria in kriterias:
             sub = request.POST.get(kriteria.nama_kriteria)
@@ -146,13 +176,14 @@ def edit_item(request):
                
         messages.success(
                 request=request, 
-                message='Succes mengupdate item!', 
+                message=f'Item {item.nama_item} berhasil diupdate.', 
         )
-        return redirect('menu_page')
+        return redirect('item_page')
 
+# @login_required(login_url='login/')
 def delete_item(request):
     if request.method == 'POST':
-        item_id = request.POST.get('id')
+        item_id = request.POST.get('inputDeleteId')
         item = Item.objects.get(id=int(item_id))
         saws = Saw.objects.filter(alternatif=item)
         for saw in saws:
@@ -160,20 +191,41 @@ def delete_item(request):
         item.delete()
         messages.success(
                 request=request, 
-                message='Succes menghapus item!', 
+                message=f'Item "{item.nama_item}" berhasil dihapus.', 
         )
-    return redirect('menu_page')
+    return redirect('item_page')
 
 
 # ===== SAW VIEWS =====
+# @login_required(login_url='login/')
 def saw_page(request):
-    saws = Saw.objects.all()
+    items = Item.objects.all()
+
+    saw_res = []
+    for item in items:
+        saw_by_item = {}
+        saw_by_item['id'] = item.id
+        saw_by_item['nama_item'] = item.nama_item
+        saw_by_item['subkriterias'] = []
+        saw_res.append(saw_by_item)
+
+        kriterias = Kriteria.objects.all()
+
+        saws = item.saw_set.all()
+        for i, saw in enumerate(saws):
+            saw_dict = {}
+            saw_dict[kriterias[i].nama_kriteria] = saw.subkriteria.nama_subkriteria if saw.subkriteria is not None else None
+            saw_by_item['subkriterias'].append(saw_dict)
+
+    # return HttpResponse(json.dumps(saw_res))
+
     context = {
-        'saws': saws
+        'saws': saw_res
     }
     return render(request, 'saw_page.html', context)
 
 # ===== KRITERIA VIEWS =====
+# @login_required(login_url='login/')
 def kriteria_page(request):
 
     kriterias = Kriteria.objects.all()
@@ -182,6 +234,7 @@ def kriteria_page(request):
     }
     return render(request, 'kriteria_page.html', context)
 
+# @login_required(login_url='login/')
 def add_kriteria(request):
     nama_kriteria = request.POST.get('inputNamaKriteria')
     atribut = request.POST.get('inputAttribut')
@@ -226,8 +279,9 @@ def add_kriteria(request):
     )
     return redirect('kriteria_page')
 
+# @login_required(login_url='login/')
 def edit_kriteria(request):
-    id_kriteria = request.POST.get('inputIdKriteria')
+    id_kriteria = request.POST.get('inputKriteriaId')
     nama_kriteria = request.POST.get('inputNamaKriteria')
     atribut = request.POST.get('inputAttribut')
     bobot = request.POST.get('inputBobot')
@@ -246,9 +300,10 @@ def edit_kriteria(request):
     )
     return redirect('kriteria_page')
 
+# @login_required(login_url='login/')
 def delete_kriteria(request):
     if request.method == 'POST':
-        kriteria_id = request.POST.get('id')
+        kriteria_id = request.POST.get('inputDeleteId')
 
         kriteria = Kriteria.objects.get(id=int(kriteria_id))
         subkriterias = kriteria.subkriteria_set.all()
@@ -268,11 +323,12 @@ def delete_kriteria(request):
 
         messages.success(
             request=request, 
-            message='Succes menghapus kriteria!', 
+            message=f'Kriteria {kriteria.nama_kriteria} berhasil dihapus.', 
         )
     return redirect('kriteria_page')
 
 # ===== SUBKRITERIA =====
+# @login_required(login_url='login/')
 def subkriteria_page(request):
     subkriterias = Subkriteria.objects.all()
     kriterias = Kriteria.objects.all()
@@ -282,6 +338,7 @@ def subkriteria_page(request):
     }
     return render(request, 'subkriteria_page.html', context)
 
+# @login_required(login_url='login/')
 def add_subkriteria(request):
     nama_subkriteria = request.POST.get('inputNamaSubkriteria')
     nama_kriteria = request.POST.get('inputNamaKriteria')
@@ -305,8 +362,9 @@ def add_subkriteria(request):
     
     return redirect('subkriteria_page')
 
+# @login_required(login_url='login/')
 def edit_subkriteria(request):
-    subkriteria_id = request.POST.get('inputIdKriteria')
+    subkriteria_id = request.POST.get('inputKriteriaId')
     nama_subkriteria = request.POST.get('inputNamaSubkriteria')
     nama_kriteria = request.POST.get('inputNamaKriteria')
 
@@ -332,8 +390,9 @@ def edit_subkriteria(request):
     )
     return redirect('subkriteria_page')
 
+# @login_required(login_url='login/')
 def delete_subkriteria(request):
-    subkriteria_id = request.POST['id']
+    subkriteria_id = request.POST['inputDeleteId']
     subkriteria = Subkriteria.objects.get(id=subkriteria_id)
 
     # menghapus objects saw yang berhubungan dengan subkriteria

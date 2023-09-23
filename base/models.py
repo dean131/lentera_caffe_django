@@ -32,9 +32,10 @@ class User(AbstractBaseUser):
     ]
 
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True,)
-    full_name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=20, blank=True, null=True) 
-    profile_picture = models.ImageField(blank=True, null=True)
+    nama = models.CharField(max_length=255)
+    telepon = models.CharField(max_length=20, blank=True, null=True) 
+    role = models.CharField(max_length=20) 
+    foto_profil = models.ImageField(blank=True, null=True)
 
     date_joined = models.DateField(verbose_name='date joined', auto_now_add=True,)
     last_login = models.DateField(verbose_name='last login', auto_now=True,)
@@ -110,7 +111,7 @@ class Order(models.Model):
     qr_code = models.CharField(max_length=250)
 
     def __str__(self):
-        return f'Dipesan oleh {self.user.full_name}'
+        return f'Dipesan oleh {self.user.nama}'
     
 
 class OrderItem(models.Model):

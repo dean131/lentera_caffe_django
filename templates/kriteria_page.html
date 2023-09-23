@@ -63,18 +63,18 @@
 {% block script %}
     <script>
         $(document).ready(function () {
-            $('#collapseMenus').collapse('show');
+            $('#collapseMenu').collapse('show');
             $('.menu-nav-item').addClass('active');
             $('.kriteria-nav-item').addClass('active');
 
             const csrf_token = '{{csrf_token}}';
 
             $('.btn-add').on('click', function() {
+                document.getElementById('kriteriaForm').action = '{% url "add_kriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#kriteriaModalLabel').html('<strong>Tambah Kriteria</strong>');
                 $('.textarea-subkriteria').show()
                 $('input').val('')
-                document.getElementById('kriteriaForm').action = '{% url "add_kriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
             });
 
             var table = $('#dataTable').DataTable();
@@ -82,29 +82,27 @@
 
             // edit function 
             $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                document.getElementById('kriteriaForm').action = '{% url "edit_kriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#kriteriaModalLabel').html('<strong>Edit Kriteria</strong>');
                 $('.textarea-subkriteria').hide()
                 // get data from row 
                 row_data = table.row($(this).parents('tr') ).data();
-                $('#inputIdKriteria').val(row_data[0]);
+                $('#inputKriteriaId').val(row_data[0]);
                 $('#inputNamaKriteria').val(row_data[1]);
                 $('#inputPertanyaan').val(row_data[2]);
                 $('#inputBobot').val(parseFloat(row_data[3]));
                 $('#inputAttribut').val(row_data[4]);
-
-                document.getElementById('kriteriaForm').action = '{% url "edit_kriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
             }); 
 
             // delete function 
             $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                document.getElementById('deleteForm').action = '{% url "delete_kriteria" %}';
+                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#deleteModalLabel').html('<strong>Delete Kriteria</strong>');
                 // get data from row 
                 row_data = table.row( $(this).parents('tr') ).data();
-                $('#inputId').val(row_data[0]);
-
-                document.getElementById('deleteForm').action = '{% url "delete_kriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
+                $('#inputDeleteId').val(row_data[0]);
             });
         });
     </script>

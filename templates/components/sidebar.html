@@ -45,14 +45,14 @@
 
     <!-- Nav Item - Pages Collapse Menu -->
     <li class="nav-item menu-nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMenus"
-            aria-expanded="true" aria-controls="collapseMenus">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMenu"
+            aria-expanded="true" aria-controls="collapseMenu">
             <i class="bi bi-card-checklist"></i>
             <span>Menu</span>
         </a>
-        <div id="collapseMenus" class="collapse" aria-labelledby="headingMenus" data-parent="#accordionSidebar">
+        <div id="collapseMenu" class="collapse" aria-labelledby="headingMenus" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item items-nav-item" href="{% url 'menu_page' %}">Item</a>
+                <a class="collapse-item items-nav-item" href="{% url 'item_page' %}">Item</a>
                 <a class="collapse-item saw-nav-item" href="{% url 'saw_page' %}">SAW</a>
                 <a class="collapse-item kriteria-nav-item" href="{% url 'kriteria_page' %}">Kriteria</a>
                 <a class="collapse-item subkriteria-nav-item" href="{% url 'subkriteria_page' %}">Subkriteria</a>

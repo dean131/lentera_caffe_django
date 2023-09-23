@@ -17,27 +17,32 @@
     </style>  
 </head>
 <body>
-    <div class="row d-flex justify-content-center">
-        <div class="col-3 vertical-center">
-            <div class="card py-4 shadow">
-                <div class="text-center">
-                    <h3 class="card-title text-danger"><strong>Lentera Cafe Admin</strong></h3>
-                </div>
-                <div class="card-body">
-                    <div class="mb-4">
-                        <p class="card-title card-text">Selamat datang</p>
-                        <p class="card-text text-xs">Silahkan Login untuk melanjutkan</p>
+    <div class="container-fluid">
+        <div class="row d-flex justify-content-center">
+            <div class="col-lg-3 vertical-center">
+                <div class="card py-4 shadow">
+                    <div class="text-center">
+                        <h3 class="card-title text-danger"><strong>Lentera Cafe Admin</strong></h3>
                     </div>
-                    <div class="mb-2">
-                        <label for="exampleInputEmail1" class="form-label text-xs">EMAIL</label>
-                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="email">
-                    </div>
-                    <div class="mb-4">
-                        <label for="exampleInputPassword1" class="form-label text-xs">PASSWORD</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1" name="password">
-                    </div>
-                    <div class="d-grid">
-                        <a href="{% url 'login' %}" class="btn bg-danger text-white btn-block btn-login">Masuk</a>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <p class="card-title card-text">Selamat datang</p>
+                                <p class="card-text text-xs">Silahkan Login untuk melanjutkan</p>
+                            </div>
+                            <div class="mb-2">
+                                <label for="inputEmail" class="form-label text-xs">EMAIL</label>
+                                <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" name="inputEmail">
+                            </div>
+                            <div class="mb-4">
+                                <label for="inputPassword" class="form-label text-xs">PASSWORD</label>
+                                <input type="password" class="form-control" id="inputPassword" name="inputPassword">
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn bg-danger text-white btn-block btn-login">Masuk</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -13,3 +13,4 @@ class MenuModelSerializer(serializers.ModelSerializer):
     def get_saws(self, obj):
         saws = obj.saw_set.all()
         return SawModelSerializer(saws, many=True).data
+    
