@@ -5,8 +5,6 @@ from django.shortcuts import redirect, render
 
 from .models import Item, Saw, Kriteria, Subkriteria
 
-from .serializers import MenuModelSerializer, SawModelSerializer
-
 import json
 from django.shortcuts import HttpResponse
 
@@ -15,7 +13,6 @@ def login_user(request):
         email = request.POST["inputEmail"]
         password = request.POST["inputPassword"]
         user = authenticate(email=email, password=password)
-        print(user)
         if user:
             login(request, user)
             return redirect('dashboard')
@@ -74,17 +71,6 @@ def item_page(request):
 
         list_item.append(item_obj)
 
-    # return HttpResponse(json.dumps(list_item))
-
-    # list_kriteria = {}
-    # for kriteria in kriterias:
-    #     subs = Subkriteria.objects.filter(kriteria=kriteria)
-    #     list_subs = []
-    #     for sub in subs:
-    #         list_subs.append(sub.nama_subkriteria)
-    #     list_kriteria.update({f'{kriteria.nama_kriteria}': list_subs})
-
-
     kriterias = Kriteria.objects.all()
     list_kriteria = []
     for kriteria in kriterias:
@@ -132,7 +118,7 @@ def add_item(request):
 
         messages.success(
                 request=request, 
-                message=f'Item "{item.nama_item}" berhasil ditambahkan.', 
+                message=f'Item "{item.nama_item}" berhasil ditambahkankan.', 
         )
         return redirect('item_page')
     
@@ -176,7 +162,7 @@ def edit_item(request):
                
         messages.success(
                 request=request, 
-                message=f'Item {item.nama_item} berhasil diupdate.', 
+                message=f'Item "{item.nama_item}" berhasil diupdate.', 
         )
         return redirect('item_page')
 
@@ -216,8 +202,6 @@ def saw_page(request):
             saw_dict = {}
             saw_dict[kriterias[i].nama_kriteria] = saw.subkriteria.nama_subkriteria if saw.subkriteria is not None else None
             saw_by_item['subkriterias'].append(saw_dict)
-
-    # return HttpResponse(json.dumps(saw_res))
 
     context = {
         'saws': saw_res
@@ -275,7 +259,7 @@ def add_kriteria(request):
 
     messages.success(
             request=request, 
-            message='Succes menambah kriteria!', 
+            message=f'Kriteria "{kriteria.nama_kriteria}" berhasil ditambahkan.', 
     )
     return redirect('kriteria_page')
 
@@ -296,7 +280,7 @@ def edit_kriteria(request):
 
     messages.success(
         request=request, 
-        message='Succes mengupdate kriteria!', 
+        message=f'Kriteria "{nama_kriteria}" berhasil diubah.', 
     )
     return redirect('kriteria_page')
 
@@ -323,7 +307,7 @@ def delete_kriteria(request):
 
         messages.success(
             request=request, 
-            message=f'Kriteria {kriteria.nama_kriteria} berhasil dihapus.', 
+            message=f'Kriteria "{kriteria.nama_kriteria}" berhasil dihapus.', 
         )
     return redirect('kriteria_page')
 
@@ -352,12 +336,12 @@ def add_subkriteria(request):
     if created:
         messages.success(
             request=request, 
-            message='Berhasil menambah subkriteria!', 
+            message=f'Subkriteria "{subkriteria.nama_subkriteria}" berhasil ditambahkan.', 
         )
     else:
         messages.error(
             request=request, 
-            message='Subkriteria telah ditambah sebelumnya!', 
+            message=f'Subkriteria "{subkriteria.nama_subkriteria}" telah ditambahkan sebelumnya!', 
         )
     
     return redirect('subkriteria_page')
@@ -375,7 +359,7 @@ def edit_subkriteria(request):
     if existing_subkriteria:
         messages.error(
             request=request,
-            message='Nama subkriteria sudah ada.',
+            message=f'Subkriteria "{existing_subkriteria[0]}" sudah ada.',
         )
         return redirect('subkriteria_page')
 
@@ -386,7 +370,7 @@ def edit_subkriteria(request):
 
     messages.success(
         request=request, 
-        message=f'Subkriteria "{nama_subkriteria}" berhasil diperbarui!', 
+        message=f'Subkriteria "{nama_subkriteria}" berhasil diubah!', 
     )
     return redirect('subkriteria_page')
 
@@ -405,7 +389,7 @@ def delete_subkriteria(request):
 
     messages.success(
             request=request, 
-            message=f'Behasil menghapus subkriteria {subkriteria.nama_subkriteria}.', 
+            message=f'Subkriteria "{subkriteria.nama_subkriteria}" berhasil.', 
     )
     return redirect('subkriteria_page')
 
