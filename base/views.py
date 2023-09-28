@@ -393,6 +393,8 @@ def delete_subkriteria(request):
     )
     return redirect('subkriteria_page')
 
+# widi disini
+
 
 
     
