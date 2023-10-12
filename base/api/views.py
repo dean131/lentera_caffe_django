@@ -274,19 +274,13 @@ def get_pertanyaan(request):
     kriterias = Kriteria.objects.all()
     pertanyaan_serializer = PertanyaanModelSerializer(kriterias, many=True)
 
-    # # LIMA BARIS
-    # for kriteria in pertanyaan_serializer.data:
-    #     list_subkriteria = []
-    #     for subkriteria in kriteria['subkriteria']:
-    #         list_subkriteria.append(subkriteria['nama_subkriteria'])
-    #     kriteria['subkriteria'] = list_subkriteria
+    
+    for kriteria in pertanyaan_serializer.data:
+        list_subkriteria = []
+        for subkriteria in kriteria['subkriteria']:
+            list_subkriteria.append(subkriteria['nama_subkriteria'])
+        kriteria['subkriteria'] = list_subkriteria
 
-    # # DUA BARIS
-    # for kriteria in pertanyaan_serializer.data:
-    #     kriteria['subkriteria'] = [subkriteria['nama_subkriteria'] for subkriteria in kriteria['subkriteria']]
-
-    # SATU BARIS
-    [kriteria.update({'subkriteria': [subkriteria['nama_subkriteria'] for subkriteria in kriteria['subkriteria']]}) for kriteria in pertanyaan_serializer.data]
 
     return Response({
         'code': '200',
