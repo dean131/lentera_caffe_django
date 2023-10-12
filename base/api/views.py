@@ -1,11 +1,12 @@
 from collections import OrderedDict
 
+from category_encoders import OrdinalEncoder
+import pandas as pd
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-
-import pandas as pd
-from category_encoders import OrdinalEncoder
+from rest_framework.views import APIView
 
 from base.models import Saw, Kriteria, Item, Subkriteria
 from .serializers import (
@@ -14,167 +15,370 @@ from .serializers import (
 )
 
 
-@api_view(['POST'])
-def saw(request):
-    user_response = request.data
-    
-    # convert model kriteria to df
-    kriterias = Kriteria.objects.all()
-    kriteria_dict = []
-    for kriteria in kriterias:
-        kriteria_dict.append({"nama": kriteria.nama_kriteria, "bobot": float(kriteria.bobot), "attribut": kriteria.atribut})
-    kriteria_df = pd.DataFrame(kriteria_dict)
+class SawView(APIView):
+    def post(self, request, format=None):
+        user_response = request.data
+        
+        # convert model kriteria to df
+        kriterias = Kriteria.objects.all()
+        kriteria_dict = []
+        for kriteria in kriterias:
+            kriteria_dict.append({"nama": kriteria.nama_kriteria, "bobot": float(kriteria.bobot), "attribut": kriteria.atribut})
+        kriteria_df = pd.DataFrame(kriteria_dict)
 
-    # convert model subkriteria to df
-    subkriterias = Subkriteria.objects.all()
-    subkriteria_dict = []
-    for sub in subkriterias:
-        subkriteria_dict.append({"kriteria": str(sub.kriteria), "sub_kriteria": str(sub.nama_subkriteria)})
-    sub_kriteria_df = pd.DataFrame(subkriteria_dict)
+        # convert model subkriteria to df
+        subkriterias = Subkriteria.objects.all()
+        subkriteria_dict = []
+        for sub in subkriterias:
+            subkriteria_dict.append({"kriteria": str(sub.kriteria), "sub_kriteria": str(sub.nama_subkriteria)})
+        sub_kriteria_df = pd.DataFrame(subkriteria_dict)
 
-    # convert model saw to df
-    saws = Saw.objects.all()
-    list_saw = [saw.subkriteria.kriteria.nama_kriteria for saw in saws if saw.subkriteria != None]
-    correct_saw = [saw for saw in saws if saw.subkriteria != None]
-    counter = max([list_saw.count(i) for i in list_saw if i != None])
-    available_col = []
-    for key in list(OrderedDict.fromkeys(list_saw)):
-        if key is not None:
-            if list_saw.count(key) == counter:
-                available_col.append(key)
-            if list_saw.count(key) != counter:
-                print(key)
-                for saw in correct_saw:
-                    if saw.subkriteria is not None:
-                        if saw.subkriteria.kriteria.nama_kriteria == key:
-                            correct_saw.remove(saw)
-                            
-    saw_dict = []
-    for saw in correct_saw:
-        if saw.subkriteria is not None:
-            saw_dict.append({'alternatif': saw.alternatif.nama_item, 'sub_kriteria' : saw.subkriteria.nama_subkriteria})
+        # convert model saw to df
+        saws = Saw.objects.all()
+        list_saw = [saw.subkriteria.kriteria.nama_kriteria for saw in saws if saw.subkriteria != None]
+        correct_saw = [saw for saw in saws if saw.subkriteria != None]
+        counter = max([list_saw.count(i) for i in list_saw if i != None])
+        available_col = []
+        for key in list(OrderedDict.fromkeys(list_saw)):
+            if key is not None:
+                if list_saw.count(key) == counter:
+                    available_col.append(key)
+                if list_saw.count(key) != counter:
+                    print(key)
+                    for saw in correct_saw:
+                        if saw.subkriteria is not None:
+                            if saw.subkriteria.kriteria.nama_kriteria == key:
+                                correct_saw.remove(saw)
+                                
+        saw_dict = []
+        for saw in correct_saw:
+            if saw.subkriteria is not None:
+                saw_dict.append({'alternatif': saw.alternatif.nama_item, 'sub_kriteria' : saw.subkriteria.nama_subkriteria})
 
-    # for i in correct_saw:
-    #     print(i)
+        # for i in correct_saw:
+        #     print(i)
 
-    saw_df = pd.DataFrame(saw_dict)
-    saw_df = saw_df[saw_df.sub_kriteria != 'None']    
+        saw_df = pd.DataFrame(saw_dict)
+        saw_df = saw_df[saw_df.sub_kriteria != 'None']    
 
-    # gabung subkriteria jadi 1 row per alternatif
-    merge_saw_df = saw_df.groupby("alternatif", as_index=False, sort=False).agg({"sub_kriteria": ", ".join})
+        # gabung subkriteria jadi 1 row per alternatif
+        merge_saw_df = saw_df.groupby("alternatif", as_index=False, sort=False).agg({"sub_kriteria": ", ".join})
 
-    # ngilangin kategori yang belum terhubung ke alternatif
-    set_col = list(set(available_col))
-    kriteria_df = kriteria_df[kriteria_df['nama'].isin(set_col)]
-    sub_kriteria_df = sub_kriteria_df[sub_kriteria_df['kriteria'].isin(set_col)]
+        # ngilangin kategori yang belum terhubung ke alternatif
+        set_col = list(set(available_col))
+        kriteria_df = kriteria_df[kriteria_df['nama'].isin(set_col)]
+        sub_kriteria_df = sub_kriteria_df[sub_kriteria_df['kriteria'].isin(set_col)]
 
-    # convert item to df
-    alternatifs = Item.objects.all()
-    alternatif_dict = []
-    for alt in alternatifs:
-        alternatif_dict.append({'alternatif':alt})
-    alternatif_df = pd.DataFrame(alternatif_dict)
+        # convert item to df
+        alternatifs = Item.objects.all()
+        alternatif_dict = []
+        for alt in alternatifs:
+            alternatif_dict.append({'alternatif':alt})
+        alternatif_df = pd.DataFrame(alternatif_dict)
 
-    col_name = kriteria_df["nama"].values.tolist()
-    merge_saw_df[col_name] = merge_saw_df["sub_kriteria"].str.split(", ", expand=True)
-    data_df = merge_saw_df.drop(["sub_kriteria"], axis=1).copy()
+        col_name = kriteria_df["nama"].values.tolist()
+        merge_saw_df[col_name] = merge_saw_df["sub_kriteria"].str.split(", ", expand=True)
+        data_df = merge_saw_df.drop(["sub_kriteria"], axis=1).copy()
 
-    # pisahin label dan features
-    df = data_df.drop(["alternatif"], axis=1).copy()
+        # pisahin label dan features
+        df = data_df.drop(["alternatif"], axis=1).copy()
 
-    # fungsi pembobotan kriteria
-    def bobot_alternatife(sub_kriteria, label, bobot_max, bobot_min, response):
-        selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == label]
-        if selected_kriteria.iloc[0]["attribut"] == "cost":
-            bobot_min = bobot_max
-            bobot_max = 1
-        input_user = response
-        map_kriteria = sub_kriteria.copy()
-        for key in map_kriteria.keys():
-            if key == input_user:
-                map_kriteria[key] = bobot_max
-            if key != input_user:
-                map_kriteria[key] = bobot_min
-        return map_kriteria
+        # fungsi pembobotan kriteria
+        def bobot_alternatife(sub_kriteria, label, bobot_max, bobot_min, response):
+            selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == label]
+            if selected_kriteria.iloc[0]["attribut"] == "cost":
+                bobot_min = bobot_max
+                bobot_max = 1
+            input_user = response
+            map_kriteria = sub_kriteria.copy()
+            for key in map_kriteria.keys():
+                if key == input_user:
+                    map_kriteria[key] = bobot_max
+                if key != input_user:
+                    map_kriteria[key] = bobot_min
+            return map_kriteria
 
-    # fungsi pembuat format dasar nilai kriteria
-    def maping_subkriteria(map_dict):
+        # fungsi pembuat format dasar nilai kriteria
+        def maping_subkriteria(map_dict):
+            key_kriteria = sub_kriteria_df.iloc[:]["kriteria"].unique().tolist()
+            for key in key_kriteria:
+                map_dict[key] = {}
+                selected_sub = sub_kriteria_df.loc[sub_kriteria_df["kriteria"] == key]
+                val_kriteria = selected_sub.iloc[:]["sub_kriteria"].values.tolist()
+                for value in val_kriteria:
+                    map_dict[key].update({value: 0})
+
+        # normalisasi
+        def normalisasi(normalisasi):
+            for key in normalisasi.keys():
+                selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == key]
+                if selected_kriteria.iloc[0]["attribut"] != "cost":
+                    max_value = normalisasi[key].max()
+                    for i in range(normalisasi.shape[0]):
+                        max_norm = (normalisasi[key][i] / max_value)
+                        normalisasi.loc[i, key] = max_norm
+                if selected_kriteria.iloc[0]["attribut"] == "cost":
+                    min_value = normalisasi[key].min()
+                    for i in range(normalisasi.shape[0]):
+                        min_norm = (min_value / normalisasi[key][i])
+                        normalisasi.loc[i, key] = min_norm
+
+        # preferensi
+        def preferensi(preferensi):
+            for key in preferensi.keys():
+                selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == key]
+                bobot = selected_kriteria.iloc[0]["bobot"]
+                for i in range(preferensi.shape[0]):
+                    nilai_preferensi = bobot * preferensi[key][i]
+                    preferensi.loc[i, key] = nilai_preferensi
+
+        # fungsi guna menghubungkan label dan featurs kembali
+        def ranking(rank):
+            rank["Jumlah"] = rank.sum(axis=1)
+            rank["Alternatif"] = alternatif_df["alternatif"]
+
+        map_kriteria = {}
+        maping_subkriteria(map_kriteria)
+
         key_kriteria = sub_kriteria_df.iloc[:]["kriteria"].unique().tolist()
         for key in key_kriteria:
-            map_dict[key] = {}
+            map_kriteria[key] = {}
             selected_sub = sub_kriteria_df.loc[sub_kriteria_df["kriteria"] == key]
             val_kriteria = selected_sub.iloc[:]["sub_kriteria"].values.tolist()
             for value in val_kriteria:
-                map_dict[key].update({value: 0})
+                map_kriteria[key].update({value: 0})
 
-    # normalisasi
-    def normalisasi(normalisasi):
-        for key in normalisasi.keys():
-            selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == key]
-            if selected_kriteria.iloc[0]["attribut"] != "cost":
-                max_value = normalisasi[key].max()
-                for i in range(normalisasi.shape[0]):
-                    max_norm = (normalisasi[key][i] / max_value)
-                    normalisasi.loc[i, key] = max_norm
-            if selected_kriteria.iloc[0]["attribut"] == "cost":
-                min_value = normalisasi[key].min()
-                for i in range(normalisasi.shape[0]):
-                    min_norm = (min_value / normalisasi[key][i])
-                    normalisasi.loc[i, key] = min_norm
+        for key in map_kriteria:
+            map_kriteria[key] = bobot_alternatife(
+                map_kriteria[key], key, len(list(map_kriteria[key].keys())), 1, user_response[key]
+            )
 
-    # preferensi
-    def preferensi(preferensi):
-        for key in preferensi.keys():
-            selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == key]
-            bobot = selected_kriteria.iloc[0]["bobot"]
-            for i in range(preferensi.shape[0]):
-                nilai_preferensi = bobot * preferensi[key][i]
-                preferensi.loc[i, key] = nilai_preferensi
+        for key in df.keys():
+            kriteria_num = [{"col": key, "mapping": map_kriteria[key]}]
+            oe = OrdinalEncoder(mapping=kriteria_num)
+            df[[key]] = oe.fit_transform(df[[key]])
 
-    # fungsi guna menghubungkan label dan featurs kembali
-    def ranking(rank):
-        rank["Jumlah"] = rank.sum(axis=1)
-        rank["Alternatif"] = alternatif_df["alternatif"]
+        normalisasi_df = df.copy()
+        normalisasi(normalisasi_df)
 
-    map_kriteria = {}
-    maping_subkriteria(map_kriteria)
+        preferensi_df = normalisasi_df.copy()
+        preferensi(preferensi_df)
 
-    key_kriteria = sub_kriteria_df.iloc[:]["kriteria"].unique().tolist()
-    for key in key_kriteria:
-        map_kriteria[key] = {}
-        selected_sub = sub_kriteria_df.loc[sub_kriteria_df["kriteria"] == key]
-        val_kriteria = selected_sub.iloc[:]["sub_kriteria"].values.tolist()
-        for value in val_kriteria:
-            map_kriteria[key].update({value: 0})
+        rank_df = preferensi_df.copy()
+        ranking(rank_df)
+        sorted_rank = rank_df.sort_values(by=["Jumlah"], ascending=False)
 
-    for key in map_kriteria:
-        map_kriteria[key] = bobot_alternatife(
-            map_kriteria[key], key, len(list(map_kriteria[key].keys())), 1, user_response[key]
-        )
+        # bagian api
+        serializer = ItemModelSerializer(sorted_rank['Alternatif'][:3], many=True)
 
-    for key in df.keys():
-        kriteria_num = [{"col": key, "mapping": map_kriteria[key]}]
-        oe = OrdinalEncoder(mapping=kriteria_num)
-        df[[key]] = oe.fit_transform(df[[key]])
+        return Response({
+            'code': '200',
+            'status': 'OK',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+    
 
-    normalisasi_df = df.copy()
-    normalisasi(normalisasi_df)
+class PertanyaanView(APIView):
+    def get(self, request, format=None):
+        kriterias = Kriteria.objects.all()
+        pertanyaan_serializer = PertanyaanModelSerializer(kriterias, many=True)
 
-    preferensi_df = normalisasi_df.copy()
-    preferensi(preferensi_df)
+        
+        for kriteria in pertanyaan_serializer.data:
+            list_subkriteria = []
+            for subkriteria in kriteria['subkriteria']:
+                list_subkriteria.append(subkriteria['nama_subkriteria'])
+            kriteria['subkriteria'] = list_subkriteria
 
-    rank_df = preferensi_df.copy()
-    ranking(rank_df)
-    sorted_rank = rank_df.sort_values(by=["Jumlah"], ascending=False)
 
-    # bagian api
-    serializer = ItemModelSerializer(sorted_rank['Alternatif'][:3], many=True)
+        return Response({
+            'code': '200',
+            'status': 'OK',
+            'data': pertanyaan_serializer.data
+        }, status=status.HTTP_200_OK)
 
-    return Response({
-        'code': '200',
-        'status': 'OK',
-        'data': serializer.data
-    }, status=status.HTTP_200_OK)
+
+# @api_view(['GET'])
+# def get_pertanyaan(request):
+#     kriterias = Kriteria.objects.all()
+#     pertanyaan_serializer = PertanyaanModelSerializer(kriterias, many=True)
+
+    
+#     for kriteria in pertanyaan_serializer.data:
+#         list_subkriteria = []
+#         for subkriteria in kriteria['subkriteria']:
+#             list_subkriteria.append(subkriteria['nama_subkriteria'])
+#         kriteria['subkriteria'] = list_subkriteria
+
+
+#     return Response({
+#         'code': '200',
+#         'status': 'OK',
+#         'data': pertanyaan_serializer.data
+#     }, status=status.HTTP_200_OK)
+
+
+# @api_view(['POST'])
+# def saw(request):
+#     user_response = request.data
+    
+#     # convert model kriteria to df
+#     kriterias = Kriteria.objects.all()
+#     kriteria_dict = []
+#     for kriteria in kriterias:
+#         kriteria_dict.append({"nama": kriteria.nama_kriteria, "bobot": float(kriteria.bobot), "attribut": kriteria.atribut})
+#     kriteria_df = pd.DataFrame(kriteria_dict)
+
+#     # convert model subkriteria to df
+#     subkriterias = Subkriteria.objects.all()
+#     subkriteria_dict = []
+#     for sub in subkriterias:
+#         subkriteria_dict.append({"kriteria": str(sub.kriteria), "sub_kriteria": str(sub.nama_subkriteria)})
+#     sub_kriteria_df = pd.DataFrame(subkriteria_dict)
+
+#     # convert model saw to df
+#     saws = Saw.objects.all()
+#     list_saw = [saw.subkriteria.kriteria.nama_kriteria for saw in saws if saw.subkriteria != None]
+#     correct_saw = [saw for saw in saws if saw.subkriteria != None]
+#     counter = max([list_saw.count(i) for i in list_saw if i != None])
+#     available_col = []
+#     for key in list(OrderedDict.fromkeys(list_saw)):
+#         if key is not None:
+#             if list_saw.count(key) == counter:
+#                 available_col.append(key)
+#             if list_saw.count(key) != counter:
+#                 print(key)
+#                 for saw in correct_saw:
+#                     if saw.subkriteria is not None:
+#                         if saw.subkriteria.kriteria.nama_kriteria == key:
+#                             correct_saw.remove(saw)
+                            
+#     saw_dict = []
+#     for saw in correct_saw:
+#         if saw.subkriteria is not None:
+#             saw_dict.append({'alternatif': saw.alternatif.nama_item, 'sub_kriteria' : saw.subkriteria.nama_subkriteria})
+
+#     # for i in correct_saw:
+#     #     print(i)
+
+#     saw_df = pd.DataFrame(saw_dict)
+#     saw_df = saw_df[saw_df.sub_kriteria != 'None']    
+
+#     # gabung subkriteria jadi 1 row per alternatif
+#     merge_saw_df = saw_df.groupby("alternatif", as_index=False, sort=False).agg({"sub_kriteria": ", ".join})
+
+#     # ngilangin kategori yang belum terhubung ke alternatif
+#     set_col = list(set(available_col))
+#     kriteria_df = kriteria_df[kriteria_df['nama'].isin(set_col)]
+#     sub_kriteria_df = sub_kriteria_df[sub_kriteria_df['kriteria'].isin(set_col)]
+
+#     # convert item to df
+#     alternatifs = Item.objects.all()
+#     alternatif_dict = []
+#     for alt in alternatifs:
+#         alternatif_dict.append({'alternatif':alt})
+#     alternatif_df = pd.DataFrame(alternatif_dict)
+
+#     col_name = kriteria_df["nama"].values.tolist()
+#     merge_saw_df[col_name] = merge_saw_df["sub_kriteria"].str.split(", ", expand=True)
+#     data_df = merge_saw_df.drop(["sub_kriteria"], axis=1).copy()
+
+#     # pisahin label dan features
+#     df = data_df.drop(["alternatif"], axis=1).copy()
+
+#     # fungsi pembobotan kriteria
+#     def bobot_alternatife(sub_kriteria, label, bobot_max, bobot_min, response):
+#         selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == label]
+#         if selected_kriteria.iloc[0]["attribut"] == "cost":
+#             bobot_min = bobot_max
+#             bobot_max = 1
+#         input_user = response
+#         map_kriteria = sub_kriteria.copy()
+#         for key in map_kriteria.keys():
+#             if key == input_user:
+#                 map_kriteria[key] = bobot_max
+#             if key != input_user:
+#                 map_kriteria[key] = bobot_min
+#         return map_kriteria
+
+#     # fungsi pembuat format dasar nilai kriteria
+#     def maping_subkriteria(map_dict):
+#         key_kriteria = sub_kriteria_df.iloc[:]["kriteria"].unique().tolist()
+#         for key in key_kriteria:
+#             map_dict[key] = {}
+#             selected_sub = sub_kriteria_df.loc[sub_kriteria_df["kriteria"] == key]
+#             val_kriteria = selected_sub.iloc[:]["sub_kriteria"].values.tolist()
+#             for value in val_kriteria:
+#                 map_dict[key].update({value: 0})
+
+#     # normalisasi
+#     def normalisasi(normalisasi):
+#         for key in normalisasi.keys():
+#             selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == key]
+#             if selected_kriteria.iloc[0]["attribut"] != "cost":
+#                 max_value = normalisasi[key].max()
+#                 for i in range(normalisasi.shape[0]):
+#                     max_norm = (normalisasi[key][i] / max_value)
+#                     normalisasi.loc[i, key] = max_norm
+#             if selected_kriteria.iloc[0]["attribut"] == "cost":
+#                 min_value = normalisasi[key].min()
+#                 for i in range(normalisasi.shape[0]):
+#                     min_norm = (min_value / normalisasi[key][i])
+#                     normalisasi.loc[i, key] = min_norm
+
+#     # preferensi
+#     def preferensi(preferensi):
+#         for key in preferensi.keys():
+#             selected_kriteria = kriteria_df.loc[kriteria_df["nama"] == key]
+#             bobot = selected_kriteria.iloc[0]["bobot"]
+#             for i in range(preferensi.shape[0]):
+#                 nilai_preferensi = bobot * preferensi[key][i]
+#                 preferensi.loc[i, key] = nilai_preferensi
+
+#     # fungsi guna menghubungkan label dan featurs kembali
+#     def ranking(rank):
+#         rank["Jumlah"] = rank.sum(axis=1)
+#         rank["Alternatif"] = alternatif_df["alternatif"]
+
+#     map_kriteria = {}
+#     maping_subkriteria(map_kriteria)
+
+#     key_kriteria = sub_kriteria_df.iloc[:]["kriteria"].unique().tolist()
+#     for key in key_kriteria:
+#         map_kriteria[key] = {}
+#         selected_sub = sub_kriteria_df.loc[sub_kriteria_df["kriteria"] == key]
+#         val_kriteria = selected_sub.iloc[:]["sub_kriteria"].values.tolist()
+#         for value in val_kriteria:
+#             map_kriteria[key].update({value: 0})
+
+#     for key in map_kriteria:
+#         map_kriteria[key] = bobot_alternatife(
+#             map_kriteria[key], key, len(list(map_kriteria[key].keys())), 1, user_response[key]
+#         )
+
+#     for key in df.keys():
+#         kriteria_num = [{"col": key, "mapping": map_kriteria[key]}]
+#         oe = OrdinalEncoder(mapping=kriteria_num)
+#         df[[key]] = oe.fit_transform(df[[key]])
+
+#     normalisasi_df = df.copy()
+#     normalisasi(normalisasi_df)
+
+#     preferensi_df = normalisasi_df.copy()
+#     preferensi(preferensi_df)
+
+#     rank_df = preferensi_df.copy()
+#     ranking(rank_df)
+#     sorted_rank = rank_df.sort_values(by=["Jumlah"], ascending=False)
+
+#     # bagian api
+#     serializer = ItemModelSerializer(sorted_rank['Alternatif'][:3], many=True)
+
+#     return Response({
+#         'code': '200',
+#         'status': 'OK',
+#         'data': serializer.data
+#     }, status=status.HTTP_200_OK)
 
 
 # @api_view(['POST'])
@@ -267,26 +471,6 @@ def saw(request):
 #         'status': 'CREATED'
 #     }, status=status.HTTP_201_CREATED)
 
-
-@api_view(['GET'])
-def get_pertanyaan(request):
-
-    kriterias = Kriteria.objects.all()
-    pertanyaan_serializer = PertanyaanModelSerializer(kriterias, many=True)
-
-    
-    for kriteria in pertanyaan_serializer.data:
-        list_subkriteria = []
-        for subkriteria in kriteria['subkriteria']:
-            list_subkriteria.append(subkriteria['nama_subkriteria'])
-        kriteria['subkriteria'] = list_subkriteria
-
-
-    return Response({
-        'code': '200',
-        'status': 'OK',
-        'data': pertanyaan_serializer.data
-    }, status=status.HTTP_200_OK)
 
 
 

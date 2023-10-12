@@ -14,11 +14,19 @@ from .serializers import UserModelSerializer
 
 
 class UserModelViewSet(ModelViewSet):
+    """
+    A viewset for viewing and editing User instances.
+    """
     serializer_class = UserModelSerializer
     queryset = User.objects.all()
 
 
 class RegisterView(APIView):
+    """
+    API endpoint that allows users to register.
+    """
+    permission_classes = [AllowAny]
+    
     def post(self, request, format=None):
         serializer = UserModelSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -30,6 +38,10 @@ class RegisterView(APIView):
 
 
 class LoginView(KnoxLoginView):
+    """
+    View for user login. Accepts POST requests with username and password in request data.
+    Returns a token if authentication is successful.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request, format=None):
