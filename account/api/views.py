@@ -6,7 +6,7 @@ from knox.views import LoginView as KnoxLoginView
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 
@@ -19,6 +19,30 @@ class UserModelViewSet(ModelViewSet):
     """
     serializer_class = UserModelSerializer
     queryset = User.objects.all()
+## ViewSets
+# class UserModelViewSet(ViewSet):
+#     """
+#     A viewset for viewing and editing User instances.
+#     """
+#     # serializer_class = UserModelSerializer
+#     # queryset = User.objects.all()
+
+#     def list(self, request):
+#         users = User.objects.all()
+#         serializer = UserModelSerializer(users, many=True)
+#         return Response(serializer.data)
+    
+#     def retrieve(self, request, pk=None):
+#         user = User.objects.get(pk=pk)
+#         serializer = UserModelSerializer(user)
+#         return Response(serializer.data)
+    
+#     def partial_update(self, request, pk=None):
+#         user = User.objects.get(pk=pk)
+#         serializer = UserModelSerializer(user, data=request.data, partial=True)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
 
 
 class RegisterView(APIView):

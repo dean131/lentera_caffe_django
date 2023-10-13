@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from base.models import Saw, Item, Kriteria, Subkriteria
+from base.models import Saw, Item, Kriteria, Subkriteria, Order
 
 
 class SawModelSerializer(serializers.ModelSerializer):
@@ -24,6 +24,12 @@ class KriteriaModelSerializer(serializers.ModelSerializer):
 class SubkriteriaModelSerializer(serializers.ModelSerializer):
     class Meta:
          model = Subkriteria
+         fields = '__all__'
+
+
+class OrderModelSerializer(serializers.ModelSerializer):
+    class Meta:
+         model = Order
          fields = '__all__'
 
 

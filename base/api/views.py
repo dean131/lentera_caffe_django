@@ -5,14 +5,17 @@ import pandas as pd
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet, ViewSet
 
-from base.models import Saw, Kriteria, Item, Subkriteria
+from base.models import Saw, Kriteria, Item, Subkriteria, Order, OrderItem
 from .serializers import (
-    ItemModelSerializer, 
+    ItemModelSerializer,
+    OrderModelSerializer, 
     PertanyaanModelSerializer,
 )
+
+from .filters import ItemFilterSet
 
 
 class SawView(APIView):
@@ -196,6 +199,18 @@ class PertanyaanView(APIView):
             'status': 'OK',
             'data': pertanyaan_serializer.data
         }, status=status.HTTP_200_OK)
+
+
+class ItemModelViewSet(ModelViewSet):
+    queryset = Item.objects.all()
+    serializer_class = ItemModelSerializer
+    filterset_class = ItemFilterSet
+    search_fields = ['nama_item', 'kategori', 'harga']
+
+
+class OrderModelViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderModelSerializer
 
 
 # @api_view(['GET'])

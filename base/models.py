@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import (
     BaseUserManager, 
     AbstractBaseUser,
@@ -27,7 +28,7 @@ class CustomUserManager(BaseUserManager):
 
 class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True,)
-    nama = models.CharField(max_length=255)
+    full_name = models.CharField(max_length=255)
     telepon = models.CharField(max_length=20, blank=True, null=True) 
     role = models.CharField(max_length=20) 
     foto_profil = models.ImageField(blank=True, null=True)
@@ -98,7 +99,7 @@ class Saw(models.Model):
 
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     waktu_pemesanan = models.DateTimeField()
     total_pembayaran = models.IntegerField()
     is_notified = models.BooleanField(default=False)
@@ -106,7 +107,7 @@ class Order(models.Model):
     qr_code = models.CharField(max_length=250)
 
     def __str__(self):
-        return f'Dipesan oleh {self.user.nama}'
+        return f'{self.user.full_name} - {self.waktu_pemesanan}'
     
 
 class OrderItem(models.Model):
@@ -116,4 +117,4 @@ class OrderItem(models.Model):
     total_harga = models.IntegerField()
 
     def __str__(self):
-        return 
+        return f'{self.item.nama_item} - {self.order.user.full_name}'
