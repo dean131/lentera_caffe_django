@@ -11,6 +11,7 @@ from rest_framework.viewsets import ModelViewSet, ViewSet
 from base.models import Saw, Kriteria, Item, Subkriteria, Order, OrderItem
 from .serializers import (
     ItemModelSerializer,
+    OrderItemModelSerializer,
     OrderModelSerializer, 
     PertanyaanModelSerializer,
 )
@@ -211,6 +212,11 @@ class ItemModelViewSet(ModelViewSet):
 class OrderModelViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderModelSerializer
+
+
+class OrderItemModelViewSet(ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemModelSerializer
 
 
 # @api_view(['GET'])
