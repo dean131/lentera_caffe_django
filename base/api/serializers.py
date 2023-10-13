@@ -27,16 +27,23 @@ class SubkriteriaModelSerializer(serializers.ModelSerializer):
          fields = '__all__'
 
 
+class OrderItemModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+         model = OrderItem
+         fields = '__all__'
+
+
 class OrderModelSerializer(serializers.ModelSerializer):
+    order_item = serializers.SerializerMethodField('get_order_item')
+
     class Meta:
          model = Order
          fields = '__all__'
 
-
-class OrderItemModelSerializer(serializers.ModelSerializer):
-    class Meta:
-         model = OrderItem
-         fields = '__all__'
+    def get_order_item(self, obj):
+        order_item = obj.orderitem_set.all()
+        return OrderItemModelSerializer(order_item, many=True).data
 
 
 class PertanyaanModelSerializer(serializers.ModelSerializer):

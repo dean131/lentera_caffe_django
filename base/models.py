@@ -99,11 +99,16 @@ class Saw(models.Model):
 
 
 class Order(models.Model):
+    STATUS_CHOICES = (
+        ('menunggu_konfirmasi', 'Menunggu Konfirmasi'),
+        ('diproses', 'Diproses'),
+        ('selesai', 'Selesai'),
+    )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    waktu_pemesanan = models.DateTimeField()
-    total_pembayaran = models.IntegerField()
+    waktu_pemesanan = models.DateTimeField(auto_now=True)
+    total_pembayaran = models.IntegerField(default=0)
     is_notified = models.BooleanField(default=False)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     qr_code = models.CharField(max_length=250)
 
     def __str__(self):
@@ -113,8 +118,8 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    jumlah_pesanan = models.IntegerField()
-    total_harga = models.IntegerField()
+    jumlah_pesanan = models.IntegerField(default=0)
+    total_harga = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.item.nama_item} - {self.order.user.full_name}'

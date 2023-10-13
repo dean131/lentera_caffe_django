@@ -212,11 +212,41 @@ class ItemModelViewSet(ModelViewSet):
 class OrderModelViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderModelSerializer
+    filterset_fields = ['user', 'status']
 
 
 class OrderItemModelViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemModelSerializer
+    filterset_fields = ['order', 'item']
+
+
+class TransactionViewSet(ViewSet):
+    def create(self, request):
+        order, created = Order.objects.get_or_create(
+            user=request.user,
+            status='menunggu_konfirmasi'
+        )
+
+        item_id = request.data.get('item_id')
+        item = Item.objects.get(id=item_id)
+
+        order_item, created = OrderItem.objects.get_or_create(order=order, item=item)
+        order_item.jumlah_pesanan = request.data.get('jumlah_pesanan')
+        order_item.total_harga = order_item.item.harga * order_item.jumlah_pesanan
+        order_item.save()
+
+        order_items = order.orderitem_set.all()
+        total = 0
+        for item in order_items:
+            total += item.total_harga
+        order.total_pembayaran = total
+        order.save()
+
+        return Response({
+            'order': OrderModelSerializer(order).data,
+            'order_item': OrderItemModelSerializer(order_item).data,
+        })
 
 
 # @api_view(['GET'])
