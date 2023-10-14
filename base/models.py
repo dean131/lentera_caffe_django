@@ -109,7 +109,6 @@ class Order(models.Model):
     total_pembayaran = models.IntegerField(default=0)
     is_notified = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
-    qr_code = models.CharField(max_length=250)
 
     def __str__(self):
         return f'{self.user.full_name} - {self.waktu_pemesanan}'

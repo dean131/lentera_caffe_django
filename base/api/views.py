@@ -4,8 +4,9 @@ from category_encoders import OrdinalEncoder
 import pandas as pd
 
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
 from base.models import Saw, Kriteria, Item, Subkriteria, Order, OrderItem
@@ -247,6 +248,17 @@ class TransactionViewSet(ViewSet):
             'order': OrderModelSerializer(order).data,
             'order_item': OrderItemModelSerializer(order_item).data,
         })
+    
+    def list(self, request):
+        orders = Order.objects.all()
+        return Response(OrderModelSerializer(orders, many=True).data)
+    
+    @action(detail=True, methods=['POST'])
+    def confirm_transaction(self, request, pk):
+        order = Order.objects.get(id=pk)
+        order.status = 'diproses'
+        order.save()
+        return Response(OrderModelSerializer(order).data)
 
 
 # @api_view(['GET'])
