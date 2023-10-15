@@ -206,19 +206,17 @@ class ItemModelViewSet(ModelViewSet):
     search_fields = ['nama_item', 'kategori', 'harga']
 
 
-class OrderModelViewSet(ModelViewSet):
-    queryset = Order.objects.all()
-    serializer_class = OrderModelSerializer
-    filterset_fields = ['user', 'status']
-
-
 class OrderItemModelViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemModelSerializer
     filterset_fields = ['order', 'item']
 
 
-class TransactionViewSet(ViewSet):
+class OrderModelViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderModelSerializer
+    filterset_fields = ['user', 'status']
+
     def create(self, request):
         order, created = Order.objects.get_or_create(
             user=request.user,
@@ -242,12 +240,7 @@ class TransactionViewSet(ViewSet):
 
         return Response({
             'order': OrderModelSerializer(order).data,
-            'order_item': OrderItemModelSerializer(order_item).data,
         })
-
-    def list(self, request):
-        orders = Order.objects.all()
-        return Response(OrderModelSerializer(orders, many=True).data)
 
     @action(detail=True, methods=['POST'])
     def confirm_order(self, request, pk):
