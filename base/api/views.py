@@ -21,7 +21,7 @@ from .filters import ItemFilterSet
 
 
 class SawView(APIView):
-    def post(self, request, format=None):
+    def post(self, request, format= None):
         user_response = request.data
         
         # convert model kriteria to df
@@ -177,8 +177,6 @@ class SawView(APIView):
         serializer = ItemModelSerializer(sorted_rank['Alternatif'][:3], many=True)
 
         return Response({
-            'code': '200',
-            'status': 'OK',
             'data': serializer.data
         }, status=status.HTTP_200_OK)
     
@@ -197,8 +195,6 @@ class PertanyaanView(APIView):
 
 
         return Response({
-            'code': '200',
-            'status': 'OK',
             'data': pertanyaan_serializer.data
         }, status=status.HTTP_200_OK)
 
@@ -226,7 +222,7 @@ class TransactionViewSet(ViewSet):
     def create(self, request):
         order, created = Order.objects.get_or_create(
             user=request.user,
-            status='menunggu_konfirmasi'
+            status='keranjang'
         )
 
         item_id = request.data.get('item_id')
@@ -248,17 +244,29 @@ class TransactionViewSet(ViewSet):
             'order': OrderModelSerializer(order).data,
             'order_item': OrderItemModelSerializer(order_item).data,
         })
-    
+
     def list(self, request):
         orders = Order.objects.all()
         return Response(OrderModelSerializer(orders, many=True).data)
+
+    @action(detail=True, methods=['POST'])
+    def confirm_order(self, request, pk):
+        order = Order.objects.get(id=pk)
+        order.status = 'dikonfirmasi'
+        order.save()
+        return Response({
+            'message': 'Order berhasil dikonfirmasi'
+        })
     
     @action(detail=True, methods=['POST'])
-    def confirm_transaction(self, request, pk):
+    def pay_order(self, request, pk):
         order = Order.objects.get(id=pk)
-        order.status = 'diproses'
+        order.status = 'selesai'
         order.save()
-        return Response(OrderModelSerializer(order).data)
+        return Response({
+            'message': 'Order berhasil dibayar'
+        })
+    
 
 
 # @api_view(['GET'])

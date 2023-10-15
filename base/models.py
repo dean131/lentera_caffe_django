@@ -100,8 +100,8 @@ class Saw(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES = (
-        ('menunggu_konfirmasi', 'Menunggu Konfirmasi'),
-        ('diproses', 'Diproses'),
+        ('keranjang', 'Keranjang'),
+        ('dikonfirmasi', 'Dikonfirmasi'),
         ('selesai', 'Selesai'),
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
