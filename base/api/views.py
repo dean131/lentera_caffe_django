@@ -229,6 +229,9 @@ class OrderModelViewSet(ModelViewSet):
         order_item, created = OrderItem.objects.get_or_create(order=order, item=item)
         order_item.jumlah_pesanan = request.data.get('jumlah_pesanan')
         order_item.total_harga = order_item.item.harga * order_item.jumlah_pesanan
+        if request.data.get('catatan'): 
+            order_item.catatan = request.data.get('catatan') 
+        else: order_item.catatan = ''
         order_item.save()
 
         order_items = order.orderitem_set.all()
@@ -239,7 +242,7 @@ class OrderModelViewSet(ModelViewSet):
         order.save()
 
         return Response({
-            'order': OrderModelSerializer(order).data,
+            'data': OrderModelSerializer(order).data,
         })
 
     @action(detail=True, methods=['POST'])

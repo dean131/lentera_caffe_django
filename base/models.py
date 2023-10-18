@@ -117,6 +117,7 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    catatan = models.TextField(default='')
     jumlah_pesanan = models.IntegerField(default=0)
     total_harga = models.IntegerField(default=0)
 
