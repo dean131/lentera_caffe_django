@@ -22,11 +22,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for customer in customers %}
                         <tr>
-                            <td>1</td>
-                            <td>Ultraman Tiga</td>
-                            <td>Tiga@gmail.com</td>
-                            <td>0812432424</td>
+                            <td>{{customer.id}}</td>
+                            <td>{{customer.full_name}}</td>
+                            <td>{{customer.email}}</td>
+                            <td>{{customer.phone_number}}</td>
                             <td class="d-flex justify-content-around">
                                 <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#modalUser">
                                     <i class="fa-solid fa-pen-to-square"></i>
@@ -36,6 +37,7 @@
                                 </button>
                             </td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

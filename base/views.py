@@ -33,11 +33,19 @@ def dashboard(request):
 
 @login_required(login_url='login/')
 def customers_page(request):
-    return render(request, 'customers_page.html')
+    customers = User.objects.filter(is_admin=False)
+    context = {
+        'customers': customers
+    }
+    return render(request, 'customers_page.html', context)
 
 @login_required(login_url='login/')
 def cashier_page(request):
-    return render(request, 'cashier_page.html')
+    cashiers = User.objects.filter(is_admin=False)
+    context = {
+        'cashiers': cashiers
+    }
+    return render(request, 'cashier_page.html', context)
 
 @login_required(login_url='login/')
 def admin_page(request):
