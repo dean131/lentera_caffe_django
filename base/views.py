@@ -83,10 +83,10 @@ def item_page(request):
         item_obj['nama_item'] = item.nama_item
         item_obj['kategori'] = item.kategori
         item_obj['harga'] = item.harga
-        item_obj['gambar'] = item.gambar
         item_obj['stok'] = item.stok
         item_obj['nilai'] = item.nilai
         item_obj['kriterias'] = []
+        item_obj['gambar'] = item.gambar
 
         kriterias = Kriteria.objects.all()
 
@@ -171,7 +171,8 @@ def edit_item(request):
         item.kategori = kategori
         item.harga = harga
         item.stok = stok
-        item.gambar = gambar
+        if gambar:
+            item.gambar = gambar
         item.save()
 
         kriterias = Kriteria.objects.all()
