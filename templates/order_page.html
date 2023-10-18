@@ -25,7 +25,7 @@
                             <th>Customer</th>
                             <th>Total Pembayaran</th>
                             <th>waktu pemesanan</th>
-                            <th>status</th>
+                            <!-- <th>status</th> -->
                             <!-- <th>Aksi</th> -->
                         </tr>
                     </thead>
@@ -36,7 +36,7 @@
                             <td>{{order.user.full_name}}</td>
                             <td>Rp{{order.total_pembayaran}}</td>
                             <td>{{order.waktu_pemesanan}}</td>
-                            <td {% if order.status == "dikonfirmasi" %} class="text-success" {% else %} class="text-danger" {% endif %}>{{order.status}}</td>
+                            <!-- <td {% if order.status == "dikonfirmasi" %} class="text-success" {% else %} class="text-danger" {% endif %}>{{order.status}}</td> -->
                             <!-- <td class="d-flex justify-content-around">
                                 <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>

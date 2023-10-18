@@ -21,9 +21,13 @@ def login_user(request):
 
 @login_required(login_url='login/')
 def dashboard(request):
-    customers = User.objects.all().count()
+    customers_count = User.objects.filter(is_admin=False).count()
+    items_count = Item.objects.all().count()
+    unprocessed_orders_count = Order.objects.filter(status='dikonfirmasi').count()
     context = {
-        'customers': customers
+        'customers_count': customers_count,
+        'items_count': items_count,
+        'unprocessed_orders_count': unprocessed_orders_count,
     }
     return render(request, 'dashboard.html', context)
 
