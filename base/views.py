@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 
 from .models import Item, Saw, Kriteria, Subkriteria, Order, OrderItem
+from account.models import User
 
 import json
 from django.shortcuts import HttpResponse
@@ -20,7 +21,11 @@ def login_user(request):
 
 @login_required(login_url='login/')
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    customers = User.objects.all().count()
+    context = {
+        'customers': customers
+    }
+    return render(request, 'dashboard.html', context)
 
 @login_required(login_url='login/')
 def customers_page(request):
