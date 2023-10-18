@@ -1,3 +1,6 @@
+# import os # for production
+# os.environ['OPENBLAS_NUM_THREADS'] = '1' # for production
+
 from collections import OrderedDict
 
 from category_encoders import OrdinalEncoder
