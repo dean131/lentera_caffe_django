@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect, render
 
-from .models import Item, Saw, Kriteria, Subkriteria
+from .models import Item, Saw, Kriteria, Subkriteria, Order, OrderItem
 
 import json
 from django.shortcuts import HttpResponse
@@ -36,11 +36,19 @@ def admin_page(request):
 
 @login_required(login_url='login/')
 def order_page(request):
-    return render(request, 'order_page.html')
+    orders = Order.objects.all().exclude(status='selesai').order_by('-id')
+    context = {
+        'orders': orders
+    }
+    return render(request, 'order_page.html', context)
 
 @login_required(login_url='login/')
-def cart_page(request):
-    return render(request, 'cart_page.html')
+def order_history_page(request):
+    orders = Order.objects.filter(status='selesai')
+    context = {
+        'orders': orders
+    }
+    return render(request, 'order_history_page.html', context)
 
 @login_required(login_url='login/')
 def notification_page(request):

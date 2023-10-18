@@ -4,7 +4,7 @@
 {% block content %}
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800"><strong>Data Keranjang</strong></h1>
+        <h1 class="h3 mb-0 text-gray-800"><strong>Data Riwayat Order</strong></h1>
     </div>
 
     <!-- DataTales Example -->
@@ -14,31 +14,29 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Id User</th>
                             <th>Id Order</th>
-                            <th>Id Item</th>
-                            <th>Jumlah</th>
-                            <th>Total Harga</th>
-                            <th>Keterangan</th>
-                            <th>Aksi</th>
+                            <th>Customer</th>
+                            <th>Total Pembayaran</th>
+                            <th>waktu pemesanan</th>
+                            <th>status</th>
+                            <!-- <th>Aksi</th> -->
                         </tr>
                     </thead>
                     <tbody>
+                        {% for order in orders %}
                         <tr>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>3</td>
-                            <td>22000</td>
-                            <td>Lorem ipsum</td>
-                            <td class="d-flex justify-content-around">
+                            <td>{{order.id}}</td>
+                            <td>{{order.user.full_name}}</td>
+                            <td>Rp{{order.total_pembayaran}}</td>
+                            <td>{{order.waktu_pemesanan}}</td>
+                            <td class="text-success">{{order.status}}</td>
+                            <!-- <td class="d-flex justify-content-around">
                                 <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
-                            </td>
+                            </td> -->
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -55,7 +53,7 @@
         $(document).ready(function () {
             $('#collapseThree').collapse('show');
             $('.orders-nav-item').addClass('active');
-            $('.cart-nav-item').addClass('active');
+            $('.order-history-nav-item').addClass('active');
         });
     </script>
 {% endblock %}

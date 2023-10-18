@@ -21,39 +21,29 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Id</th>
-                            <th>Id User</th>
+                            <th>Id Order</th>
+                            <th>Customer</th>
                             <th>Total Pembayaran</th>
                             <th>waktu pemesanan</th>
                             <th>status</th>
-                            <th>Aksi</th>
+                            <!-- <th>Aksi</th> -->
                         </tr>
                     </thead>
                     <tbody>
+                        {% for order in orders %}
                         <tr>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>Rp10000</td>
-                            <td>01-01-2023</td>
-                            <td class="text-danger">Menunggu</td>
-                            <td class="d-flex justify-content-around">
+                            <td>{{order.id}}</td>
+                            <td>{{order.user.full_name}}</td>
+                            <td>Rp{{order.total_pembayaran}}</td>
+                            <td>{{order.waktu_pemesanan}}</td>
+                            <td {% if order.status == "dikonfirmasi" %} class="text-success" {% else %} class="text-danger" {% endif %}>{{order.status}}</td>
+                            <!-- <td class="d-flex justify-content-around">
                                 <button type="button" class="btn btn-danger" data-id="1" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
-                            </td>
+                            </td> -->
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>Rp22000</td>
-                            <td>03-04-2023</td>
-                            <td class="text-success">Selesai</td>
-                            <td class="d-flex justify-content-around">
-                                <button type="button" class="btn btn-danger" data-id="2" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
