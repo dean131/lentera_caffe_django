@@ -84,9 +84,10 @@ def item_page(request):
         item_obj['kategori'] = item.kategori
         item_obj['harga'] = item.harga
         item_obj['stok'] = item.stok
+        item_obj['deskripsi'] = item.deskripsi
         item_obj['nilai'] = item.nilai
-        item_obj['kriterias'] = []
         item_obj['gambar'] = item.gambar
+        item_obj['kriterias'] = []
 
         kriterias = Kriteria.objects.all()
 
@@ -155,6 +156,7 @@ def edit_item(request):
         kategori = request.POST.get('inputKategoriItem')
         harga = request.POST.get('inputHargaItem')
         stok = request.POST.get('inputStokItem')
+        deskripsi = request.POST.get('inputDeskripsiItem')
         gambar = request.FILES.get('inputGambarItem')
 
         existing_item = Item.objects.filter(nama_item=nama).exclude(id=item_id)
@@ -171,6 +173,7 @@ def edit_item(request):
         item.kategori = kategori
         item.harga = harga
         item.stok = stok
+        item.deskripsi = deskripsi
         if gambar:
             item.gambar = gambar
         item.save()

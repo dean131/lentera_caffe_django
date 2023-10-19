@@ -8,6 +8,7 @@ class Item(models.Model):
     nama_item = models.CharField(max_length=50)
     kategori = models.CharField(max_length=20)
     harga = models.IntegerField()
+    deskripsi = models.TextField(default="")
     gambar = models.ImageField(null=True, blank=True, upload_to='images/')
     stok = models.CharField(max_length=20, default='tidak tersedia')
     nilai = models.IntegerField(default=0)

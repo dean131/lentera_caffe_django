@@ -28,6 +28,7 @@
                             <th>Harga</th>
                             <th>Rating</th>
                             <th>Stok</th>
+                            <th hidden>Deskripsi</th>
                             <th>Gambar</th>
                             <th>Aksi</th>
 
@@ -48,6 +49,7 @@
                             <td>Rp{{item.harga}}</td>
                             <td>{{item.nilai}}</td>
                             <td>{{item.stok}}</td>
+                            <td hidden>{{item.deskripsi}}</td>
                             <td class="text-center">
                                 <img width="100px" {% if item.gambar %} src="{{item.gambar.url}}" {% else %} src="https://placehold.co/100" {% endif %} class="rounded" alt="Tidak ada gambar">
                             </td>
@@ -114,10 +116,11 @@
                 $('#inputKategoriItem').val(row_data[2]);
                 $('#inputHargaItem').val(parseInt(row_data[3].match(/\d+/)));
                 $('#inputStokItem').val(row_data[5]);
+                $('#inputDeskripsiItem').val(row_data[6]);
                 // fill select element modal with data from hidden column row 
                 var formSelectKriteria = $('.form-select-kriteria')
                 for (let i = 0; i < formSelectKriteria.length; i++) {
-                    formSelectKriteria[i].value = row_data[8+i]
+                    formSelectKriteria[i].value = row_data[9+i]
                 }
             });
 
