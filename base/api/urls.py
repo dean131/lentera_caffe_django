@@ -8,6 +8,7 @@ router = DefaultRouter()
 router.register('items', views.ItemModelViewSet, basename='item')
 router.register('orders', views.OrderModelViewSet, basename='order')
 router.register('orderitems', views.OrderItemModelViewSet, basename='orderitem')
+router.register('notifications', views.NotifikasiModelViewSet, basename='notification')
 
 urlpatterns = [
     path('', include(router.urls)),

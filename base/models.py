@@ -70,3 +70,12 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f'{self.item.nama_item} - {self.order.user.full_name}'
+    
+
+class Notifikasi(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    is_paid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.full_name} - {self.order.id}'

@@ -12,9 +12,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet, ViewSet
 
-from base.models import Saw, Kriteria, Item, Subkriteria, Order, OrderItem
+from base.models import Saw, Kriteria, Item, Subkriteria, Order, OrderItem, Notifikasi
 from .serializers import (
     ItemModelSerializer,
+    NotifikasiModelSerializer,
     OrderItemModelSerializer,
     OrderModelSerializer, 
     PertanyaanModelSerializer,
@@ -264,6 +265,12 @@ class OrderModelViewSet(ModelViewSet):
         order = Order.objects.get(id=pk)
         order.status = 'dikonfirmasi'
         order.save()
+
+        Notifikasi.objects.create(
+            user=request.user,
+            order=order
+        )
+
         return Response({
             'message': 'Order berhasil dikonfirmasi'
         })
@@ -273,10 +280,21 @@ class OrderModelViewSet(ModelViewSet):
         order = Order.objects.get(id=pk)
         order.status = 'selesai'
         order.save()
+
+        Notifikasi.objects.filter(
+            user=request.user,
+            order=order
+        ).update(is_paid=True)
+
         return Response({
             'message': 'Order berhasil dibayar'
         })
-    
+
+
+class NotifikasiModelViewSet(ModelViewSet):
+    queryset = Notifikasi.objects.all()
+    serializer_class = NotifikasiModelSerializer
+    filterset_fields = ['user', 'is_paid']
 
 
 # @api_view(['GET'])
