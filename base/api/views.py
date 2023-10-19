@@ -177,7 +177,7 @@ class SawView(APIView):
         sorted_rank = rank_df.sort_values(by=["Jumlah"], ascending=False)
 
         # bagian api
-        serializer = ItemModelSerializer(sorted_rank['Alternatif'][:3], many=True)
+        serializer = ItemModelSerializer(sorted_rank['Alternatif'][:3], many=True, context={'request': request})
 
         return Response({
             'data': serializer.data
