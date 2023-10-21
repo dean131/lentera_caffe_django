@@ -190,13 +190,11 @@ class PertanyaanView(APIView):
         kriterias = Kriteria.objects.all()
         pertanyaan_serializer = PertanyaanModelSerializer(kriterias, many=True)
 
-        
         for kriteria in pertanyaan_serializer.data:
             list_subkriteria = []
             for subkriteria in kriteria['subkriteria']:
                 list_subkriteria.append(subkriteria['nama_subkriteria'])
             kriteria['subkriteria'] = list_subkriteria
-
 
         return Response({
             'data': pertanyaan_serializer.data
@@ -281,7 +279,7 @@ class OrderModelViewSet(ModelViewSet):
         order.save()
 
         return Response({
-            'data': OrderModelSerializer(order).data,
+            'data': self.get_serializer(order).data,
         })
 
     @action(detail=True, methods=['POST'])
