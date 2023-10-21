@@ -226,6 +226,19 @@ class OrderItemModelViewSet(ModelViewSet):
     serializer_class = OrderItemModelSerializer
     filterset_fields = ['order', 'item']
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        order = Order.objects.get(id=instance.order.id)
+        order.total_pembayaran -= instance.total_harga
+        order.save()
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
 
 class OrderModelViewSet(ModelViewSet):
     queryset = Order.objects.all()
@@ -241,7 +254,6 @@ class OrderModelViewSet(ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
-        # print(self.get_serializer_context())
         return Response(serializer.data)
 
     def create(self, request):

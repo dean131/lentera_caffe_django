@@ -41,7 +41,6 @@ class OrderItemModelSerializer(serializers.ModelSerializer):
     
     def get_gambar(self, obj):
         item = ItemModelSerializer(obj.item, context=self.context).data
-        print(item)
         return item['gambar']
 
 
