@@ -29,6 +29,7 @@ class SubkriteriaModelSerializer(serializers.ModelSerializer):
 
 class OrderItemModelSerializer(serializers.ModelSerializer):
     nama_item = serializers.SerializerMethodField('get_nama_item')
+    gambar = serializers.SerializerMethodField('get_gambar')
 
     class Meta:
          model = OrderItem
@@ -37,6 +38,10 @@ class OrderItemModelSerializer(serializers.ModelSerializer):
     def get_nama_item(self, obj):
         nama_item = obj.item.nama_item
         return nama_item
+    
+    def get_gambar(self, obj):
+        gambar = obj.item.gambar.url
+        return gambar
 
 
 class NotifikasiModelSerializer(serializers.ModelSerializer):
