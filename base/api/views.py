@@ -231,6 +231,18 @@ class OrderModelViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderModelSerializer
     filterset_fields = ['user', 'status']
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        # print(self.get_serializer_context())
+        return Response(serializer.data)
 
     def create(self, request):
         order, created = Order.objects.get_or_create(

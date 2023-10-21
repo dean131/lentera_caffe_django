@@ -40,8 +40,9 @@ class OrderItemModelSerializer(serializers.ModelSerializer):
         return nama_item
     
     def get_gambar(self, obj):
-        gambar = obj.item.gambar.url
-        return gambar
+        item = ItemModelSerializer(obj.item, context=self.context).data
+        print(item)
+        return item['gambar']
 
 
 class NotifikasiModelSerializer(serializers.ModelSerializer):
@@ -59,7 +60,7 @@ class OrderModelSerializer(serializers.ModelSerializer):
 
     def get_order_item(self, obj):
         order_item = obj.orderitem_set.all()
-        return OrderItemModelSerializer(order_item, many=True).data
+        return OrderItemModelSerializer(order_item, many=True, context=self.context).data
 
 
 class PertanyaanModelSerializer(serializers.ModelSerializer):
