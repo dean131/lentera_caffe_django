@@ -107,15 +107,16 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ],
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
 }
 
 REST_KNOX = {
-  'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
-  'AUTH_TOKEN_CHARACTER_LENGTH': 64,
-  'TOKEN_TTL': timedelta(hours=10),
-  'USER_SERIALIZER': 'account.api.serializers.UserModelSerializer',
-  'TOKEN_LIMIT_PER_USER': None,
-  'AUTO_REFRESH': False,
+    'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+    'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+    'TOKEN_TTL': timedelta(hours=10),
+    'USER_SERIALIZER': 'account.api.serializers.UserModelSerializer',
+    'TOKEN_LIMIT_PER_USER': None,
+    'AUTO_REFRESH': False,
 #   'EXPIRY_DATETIME_FORMAT': api_settings.DATETME_FORMAT,
 }
 

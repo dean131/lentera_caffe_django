@@ -282,7 +282,6 @@ class OrderModelViewSet(ModelViewSet):
             'data': self.get_serializer(order).data,
         })
 
-
     @action(detail=False, methods=['GET'])
     def order_list_user(self, request):
         orders = Order.objects.filter(user=request.user, status='keranjang')
