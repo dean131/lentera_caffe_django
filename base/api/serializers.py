@@ -28,9 +28,15 @@ class SubkriteriaModelSerializer(serializers.ModelSerializer):
 
 
 class OrderItemModelSerializer(serializers.ModelSerializer):
+    nama_item = serializers.SerializerMethodField('get_nama_item')
+
     class Meta:
          model = OrderItem
          fields = '__all__'
+
+    def get_nama_item(self, obj):
+        nama_item = obj.item.nama_item
+        return nama_item
 
 
 class NotifikasiModelSerializer(serializers.ModelSerializer):
