@@ -76,6 +76,7 @@ class Notifikasi(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     is_paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.user.full_name} - {self.order.id}'

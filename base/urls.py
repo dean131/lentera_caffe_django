@@ -7,18 +7,21 @@ urlpatterns = [
     path('', views.dashboard, name='dashboard'),
 
     path('login-user/', views.login_user, name='login_user'),
-    path('register-user/', views.register_user, name='register_user'),
     path('edit-user/', views.edit_user, name='edit_user'),
     path('delete-user/', views.delete_user, name='delete_user'),
-    path('logout/', views.logout_user, name='logout_user'),
+    path('logout-user/', views.logout_user, name='logout_user'),
 
+    path('register-customer/', views.register_customer, name='register_customer'),
     path('customers-page/', views.customers_page, name='customers_page'),
+
     path('cashier-page/', views.cashier_page, name='cashier_page'),
+    path('register-cashier/', views.register_cashier, name='register_cashier'),
+
     path('admin-page/', views.admin_page, name='admin_page'),
+    path('register-admin/', views.register_admin, name='register_admin'),
 
     path('order-page/', views.order_page, name='order_page'),
     path('order-history-page/', views.order_history_page, name='order_history_page'),
-    path('notification-page/', views.notification_page, name='notification_page'),
 
     path('item-page/', views.item_page, name='item_page'),
     path('add-item/', views.add_item, name='add_item'),
@@ -36,4 +39,6 @@ urlpatterns = [
     path('add_subkriteria/', views.add_subkriteria, name='add_subkriteria'),
     path('edit_subkriteria/', views.edit_subkriteria, name='edit_subkriteria'),
     path('delete_subkriteria/', views.delete_subkriteria, name='delete_subkriteria'),
+    
+    path('notification-page/', views.notification_page, name='notification_page'),
 ]

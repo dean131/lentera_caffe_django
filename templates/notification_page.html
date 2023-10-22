@@ -22,27 +22,22 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Judul</th>
-                            <th>Keterangan</th>
-                            <th>Kategori</th>
+                            <th>Customer</th>
+                            <th>Order</th>
+                            <th>Is Paid</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for notif in notifications %}
                         <tr>
-                            <td>1</td>
-                            <td>Selesaikan Pembayaran</td>
-                            <td>Lorem Ipsum</td>
-                            <td>Pembayaran</td>
+                            <td>notif.id</td>
+                            <td>notif.user.full_name</td>
+                            <td>notif.order</td>
+                            <td>notif.is_paid</td>
                             <td></td>
                         </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Maintenence</td>
-                            <td>Lorem Ipsum</td>
-                            <td>Sistem</td>
-                            <td></td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>

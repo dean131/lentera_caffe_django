@@ -70,7 +70,7 @@
             $('.btn-add').on('click', function() {
                 $('input').val('');
                 document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
-                document.getElementById('formUser').action = '{% url "register_user" %}';
+                document.getElementById('formUser').action = '{% url "register_customer" %}';
                 $('#modalUserLabel').html('<strong>Tambah Customer</strong>');
             });
 

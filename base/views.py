@@ -3,23 +3,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 
-from .models import Item, Saw, Kriteria, Subkriteria, Order, OrderItem
+from .models import Item, Saw, Kriteria, Subkriteria, Order, OrderItem, Notifikasi
 from account.models import User
-
-import json
-from django.shortcuts import HttpResponse
 
 def login_user(request):
     if request.method == 'POST':
         email = request.POST["inputEmail"]
         password = request.POST["inputPassword"]
         user = authenticate(email=email, password=password)
-        if user:
+        if user and user.is_superuser == True:
             login(request, user)
             return redirect('dashboard')
     return render(request, 'login.html')
 
-def register_user(request):
+def register_customer(request):
     if request.method == 'POST':
         full_name = request.POST["inputNamaUser"]
         email = request.POST["inputEmailUser"]
@@ -27,6 +24,13 @@ def register_user(request):
         password = request.POST["inputPasswordUser"]
         password2 = request.POST["inputPassword2User"]
         profile_picture = request.FILES.get('inputGambarUser')
+
+        if password != password2:
+            messages.error(
+                request=request, 
+                message=f'Password tidak sama!', 
+            )
+            return redirect('customers_page')
 
         user = User.objects.create_user(
             email=email, 
@@ -42,8 +46,72 @@ def register_user(request):
         )
 
         return redirect('customers_page')
-    return render(request, 'register.html')
 
+def register_cashier(request):
+    if request.method == 'POST':
+        full_name = request.POST["inputNamaUser"]
+        email = request.POST["inputEmailUser"]
+        phone_number = request.POST["inputTeleponUser"]
+        password = request.POST["inputPasswordUser"]
+        password2 = request.POST["inputPassword2User"]
+        profile_picture = request.FILES.get('inputGambarUser')
+
+        if password != password2:
+            messages.error(
+                request=request, 
+                message=f'Password tidak sama!', 
+            )
+            return redirect('cashier_page')
+
+        user = User.objects.create_user(
+            email=email, 
+            password=password, 
+            full_name=full_name, 
+            phone_number=phone_number,
+            profile_picture=profile_picture,
+            is_admin=True
+        )
+
+        messages.success(
+            request=request, 
+            message=f'User "{user.full_name}" berhasil ditambahkan.', 
+        )
+
+        return redirect('cashier_page')
+    
+def register_admin(request):
+    if request.method == 'POST':
+        full_name = request.POST["inputNamaUser"]
+        email = request.POST["inputEmailUser"]
+        phone_number = request.POST["inputTeleponUser"]
+        password = request.POST["inputPasswordUser"]
+        password2 = request.POST["inputPassword2User"]
+        profile_picture = request.FILES.get('inputGambarUser')
+
+        if password != password2:
+            messages.error(
+                request=request, 
+                message=f'Password tidak sama!', 
+            )
+            return redirect('admin_page')
+
+        user = User.objects.create_user(
+            email=email, 
+            password=password, 
+            full_name=full_name, 
+            phone_number=phone_number,
+            profile_picture=profile_picture,
+            is_admin=True,
+            is_superuser=True,
+        )
+
+        messages.success(
+            request=request, 
+            message=f'User "{user.full_name}" berhasil ditambahkan.', 
+        )
+
+        return redirect('admin_page')
+    
 def edit_user(request):
     if request.method == 'POST':
         user_id = request.POST.get('inputUserId')
@@ -54,16 +122,13 @@ def edit_user(request):
         password2 = request.POST.get('inputPassword2User')
         profile_picture = request.FILES.get('inputGambarUser')
 
-        if password == password2:
-            user.password = password
-            user.save()
-        else:
+        if password != password2:
             messages.error(
                 request=request, 
                 message=f'Password tidak sama!', 
             )
             return redirect('customers_page')
-        
+
         user = User.objects.get(id=int(user_id))
         user.full_name = full_name
         user.email = email
@@ -74,21 +139,13 @@ def edit_user(request):
         
         if not password:
             user.save()
-            messages.success(
-                request=request, 
-                message=f'User "{user.full_name}" berhasil diubah.', 
-            )
-            return redirect('customers_page')
 
-        if password == password2:
-            user.password = password
-            user.save()
-        else:
-            messages.error(
-                request=request, 
-                message=f'Password tidak sama!', 
-            )
-            return redirect('customers_page')
+        messages.success(
+            request=request, 
+            message=f'User "{user.full_name}" berhasil diubah.', 
+        )
+        
+        return redirect('customers_page')
         
 def delete_user(request):
     if request.method == 'POST':
@@ -127,7 +184,7 @@ def customers_page(request):
 
 @login_required(login_url='login-user/')
 def cashier_page(request):
-    cashiers = User.objects.filter(is_admin=False)
+    cashiers = User.objects.filter(is_admin=True, is_superuser=False)
     context = {
         'cashiers': cashiers
     }
@@ -135,7 +192,11 @@ def cashier_page(request):
 
 @login_required(login_url='login-user/')
 def admin_page(request):
-    return render(request, 'admin_page.html')
+    admins = User.objects.filter(is_superuser=True)
+    context = {
+        'admins': admins
+    }
+    return render(request, 'admin_page.html', context=context)
 
 @login_required(login_url='login-user/')
 def order_page(request):
@@ -155,7 +216,11 @@ def order_history_page(request):
 
 @login_required(login_url='login-user/')
 def notification_page(request):
-    return render(request, 'notification_page.html')
+    notifications = Notifikasi.objects.all()
+    context = {
+        'notifications': notifications
+    }
+    return render(request, 'notification_page.html', context)
 
 
 # ===== ITEM VIEWS =====

@@ -29,11 +29,12 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for cashier in cashiers %}
                         <tr>
-                            <td>1</td>
-                            <td>Ultraman Cosmos</td>
-                            <td>cosmos@gmail.com</td>
-                            <td>0812432424</td>
+                            <td>{{cashier.id}}</td>
+                            <td>{{cashier.full_name}}</td>
+                            <td>{{cashier.email}}</td>
+                            <td>{{cashier.phone_number}}</td>
                             <td class="d-flex justify-content-around">
                                 <button type="button" class="btn btn-warning btn-edit"  data-bs-toggle="modal" data-bs-target="#modalUser">
                                     <i class="fa-solid fa-pen-to-square"></i>
@@ -43,6 +44,7 @@
                                 </button>
                             </td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -64,17 +66,40 @@
             $('.users-nav-item').addClass('active');
             $('.cashier-nav-item').addClass('active');
 
+            const csrf_token = '{{csrf_token}}';
+            
+            // add function
+            $('.btn-add').on('click', function() {
+                $('input').val('');
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('formUser').action = '{% url "register_cashier" %}';
+                $('#modalUserLabel').html('<strong>Tambah Kasir</strong>');
+            });
 
-            $('.edit-table-btn').on('click', function() {
-                var row = $(this).closest('tr');
-                var id = row.find('td:eq(0)').text();
-                var name = row.find('td:eq(1)').text();
-                var email = row.find('td:eq(2)').text();
-                var phone = row.find('td:eq(3)').text();
+            var table = $('#dataTable').DataTable();
+            var row_data;
 
-                var editname = document.getElementById('edit-name').value = name;
-                var editemail = document.getElementById('edit-email').value = email;
-                var editphone = document.getElementById('edit-phone').value = phone;
+            // edit function 
+            $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('formUser').action = '{% url "edit_user" %}';
+                $('#modalUserLabel').html('<strong>Edit Kasir</strong>');
+                // get data from row 
+                row_data = table.row($(this).parents('tr')).data();
+                $('#inputUserId').val(row_data[0]);
+                $('#inputNamaUser').val(row_data[1]);
+                $('#inputEmailUser').val(row_data[2]);
+                $('#inputTeleponUser').val(row_data[3]);
+            });
+
+            // delete function 
+            $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('deleteForm').action = '{% url "delete_user" %}';
+                $('#modalUserLabel').html('<strong>Delete User</strong>');
+                // get data from row 
+                row_data = table.row( $(this).parents('tr') ).data();
+                $('#inputDeleteId').val(row_data[0]);
             });
         });
     </script>

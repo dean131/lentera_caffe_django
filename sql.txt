@@ -1,16 +1,16 @@
-INSERT INTO `base_item` (`id`, `nama_item`, `kategori`, `harga`, `gambar`, `jumlah_bintang`, `jumlah_penilai`, `nilai`, `stok`) VALUES
-(1, 'beef crispy steak', 'makanan', 32000, NULL, 0, 0, 0, 'tidak tersedia'),
-(2, 'double cheese burger', 'makanan', 30000, NULL, 0, 0, 0, 'tidak tersedia'),
-(3, 'kulit crispi jontor', 'snack', 22000, NULL, 0, 0, 0, 'tidak tersedia'),
-(4, 'spaghetti aglio e olio', 'makanan', 25000, NULL, 0, 0, 0, 'tidak tersedia'),
-(5, 'chicken crispy steak', 'makanan', 32000, NULL, 0, 0, 0, 'tidak tersedia'),
-(6, 'lentera platter', 'snack', 22000, NULL, 0, 0, 0, 'tidak tersedia'),
-(7, 'garlic chicken wings', 'minuman', 25000, NULL, 0, 0, 0, 'tidak tersedia'),
-(8, 'caramel macciato', 'minuman', 15000, NULL, 0, 0, 0, 'tidak tersedia'),
-(9, 'kopi susu lentera', 'minuman', 20000, NULL, 0, 0, 0, 'tidak tersedia'),
-(10, 'pink lips', 'makanan', 19000, NULL, 0, 0, 0, 'tidak tersedia'),
-(11, 'lemonade float', 'minuman', 23000, NULL, 0, 0, 0, 'tidak tersedia'),
-(12, 'green smothies coconut', 'minuman', 18000, NULL, 0, 0, 0, 'tidak tersedia');
+INSERT INTO `base_item` (`id`, `nama_item`, `kategori`, `harga`, `gambar`, `jumlah_bintang`, `jumlah_penilai`, `nilai`, `stok`, `deskripsi`) VALUES
+(1, 'beef crispy steak', 'makanan', 32000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(2, 'double cheese burger', 'makanan', 30000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(3, 'kulit crispi jontor', 'snack', 22000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(4, 'spaghetti aglio e olio', 'makanan', 25000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(5, 'chicken crispy steak', 'makanan', 32000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(6, 'lentera platter', 'snack', 22000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(7, 'garlic chicken wings', 'minuman', 25000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(8, 'caramel macciato', 'minuman', 15000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(9, 'kopi susu lentera', 'minuman', 20000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(10, 'pink lips', 'makanan', 19000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(11, 'lemonade float', 'minuman', 23000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi'),
+(12, 'green smothies coconut', 'minuman', 18000, NULL, 0, 0, 0, 'tersedia', 'Ini Deskripsi');
 
 INSERT INTO `base_kriteria` (`id`, `nama_kriteria`, `atribut`, `bobot`, `pertanyaan`) VALUES
 (1, 'cuaca', 'benefit', 0.2, 'Gimana cuacanya hari ini?'),
