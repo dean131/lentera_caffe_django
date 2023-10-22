@@ -95,10 +95,10 @@
             
             // add function
             $('.btn-add').on('click', function() {
-                document.getElementById('itemForm').action = '{% url "add_item" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
-                $('#itemModalLabel').html('<strong>Tambah Item</strong>');
                 $('input').val('');
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('itemForm').action = '{% url "add_item" %}';
+                $('#itemModalLabel').html('<strong>Tambah Item</strong>');
             });
             
             var table = $('#dataTable').DataTable();
@@ -106,8 +106,8 @@
             
             // edit function 
             $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
                 document.getElementById('itemForm').action = '{% url "edit_item" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#itemModalLabel').html('<strong>Edit Item</strong>');
                 // get data from row 
                 row_data = table.row($(this).parents('tr')).data();
@@ -126,8 +126,8 @@
 
             // delete function 
             $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
                 document.getElementById('deleteForm').action = '{% url "delete_item" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#deleteModalLabel').html('<strong>Delete Item</strong>');
                 // get data from row 
                 row_data = table.row( $(this).parents('tr') ).data();

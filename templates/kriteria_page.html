@@ -70,11 +70,11 @@
             const csrf_token = '{{csrf_token}}';
 
             $('.btn-add').on('click', function() {
+                $('input').val('')
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
                 document.getElementById('kriteriaForm').action = '{% url "add_kriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#kriteriaModalLabel').html('<strong>Tambah Kriteria</strong>');
                 $('.textarea-subkriteria').show()
-                $('input').val('')
             });
 
             var table = $('#dataTable').DataTable();
@@ -82,8 +82,8 @@
 
             // edit function 
             $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
                 document.getElementById('kriteriaForm').action = '{% url "edit_kriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#kriteriaModalLabel').html('<strong>Edit Kriteria</strong>');
                 $('.textarea-subkriteria').hide()
                 // get data from row 
@@ -97,8 +97,8 @@
 
             // delete function 
             $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
                 document.getElementById('deleteForm').action = '{% url "delete_kriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#deleteModalLabel').html('<strong>Delete Kriteria</strong>');
                 // get data from row 
                 row_data = table.row( $(this).parents('tr') ).data();

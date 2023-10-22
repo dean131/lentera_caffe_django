@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 
 from .models import Item, Saw, Kriteria, Subkriteria, Order, OrderItem
@@ -19,7 +19,93 @@ def login_user(request):
             return redirect('dashboard')
     return render(request, 'login.html')
 
-@login_required(login_url='login/')
+def register_user(request):
+    if request.method == 'POST':
+        full_name = request.POST["inputNamaUser"]
+        email = request.POST["inputEmailUser"]
+        phone_number = request.POST["inputTeleponUser"]
+        password = request.POST["inputPasswordUser"]
+        password2 = request.POST["inputPassword2User"]
+        profile_picture = request.FILES.get('inputGambarUser')
+
+        user = User.objects.create_user(
+            email=email, 
+            password=password, 
+            full_name=full_name, 
+            phone_number=phone_number,
+            profile_picture=profile_picture,
+        )
+
+        messages.success(
+            request=request, 
+            message=f'User "{user.full_name}" berhasil ditambahkan.', 
+        )
+
+        return redirect('customers_page')
+    return render(request, 'register.html')
+
+def edit_user(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('inputUserId')
+        full_name = request.POST.get('inputNamaUser')
+        email = request.POST.get('inputEmailUser')
+        phone_number = request.POST.get('inputTeleponUser')
+        password = request.POST.get('inputPasswordUser')
+        password2 = request.POST.get('inputPassword2User')
+        profile_picture = request.FILES.get('inputGambarUser')
+
+        if password == password2:
+            user.password = password
+            user.save()
+        else:
+            messages.error(
+                request=request, 
+                message=f'Password tidak sama!', 
+            )
+            return redirect('customers_page')
+        
+        user = User.objects.get(id=int(user_id))
+        user.full_name = full_name
+        user.email = email
+        user.phone_number = phone_number
+
+        if profile_picture: 
+            user.profile_picture = profile_picture
+        
+        if not password:
+            user.save()
+            messages.success(
+                request=request, 
+                message=f'User "{user.full_name}" berhasil diubah.', 
+            )
+            return redirect('customers_page')
+
+        if password == password2:
+            user.password = password
+            user.save()
+        else:
+            messages.error(
+                request=request, 
+                message=f'Password tidak sama!', 
+            )
+            return redirect('customers_page')
+        
+def delete_user(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('inputDeleteId')
+        user = User.objects.get(id=int(user_id))
+        user.delete()
+        messages.success(
+                request=request, 
+                message=f'User "{user.full_name}" berhasil dihapus.', 
+        )
+    return redirect('customers_page')
+
+def logout_user(request):
+    logout(request)
+    return redirect('login_user')
+
+@login_required(login_url='login-user/')
 def dashboard(request):
     customers_count = User.objects.filter(is_admin=False).count()
     items_count = Item.objects.all().count()
@@ -31,7 +117,7 @@ def dashboard(request):
     }
     return render(request, 'dashboard.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def customers_page(request):
     customers = User.objects.filter(is_admin=False)
     context = {
@@ -39,7 +125,7 @@ def customers_page(request):
     }
     return render(request, 'customers_page.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def cashier_page(request):
     cashiers = User.objects.filter(is_admin=False)
     context = {
@@ -47,11 +133,11 @@ def cashier_page(request):
     }
     return render(request, 'cashier_page.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def admin_page(request):
     return render(request, 'admin_page.html')
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def order_page(request):
     orders = Order.objects.all().exclude(status='selesai').order_by('-id')
     context = {
@@ -59,7 +145,7 @@ def order_page(request):
     }
     return render(request, 'order_page.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def order_history_page(request):
     orders = Order.objects.filter(status='selesai')
     context = {
@@ -67,13 +153,13 @@ def order_history_page(request):
     }
     return render(request, 'order_history_page.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def notification_page(request):
     return render(request, 'notification_page.html')
 
 
 # ===== ITEM VIEWS =====
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def item_page(request):
     items = Item.objects.all()
     list_item = []
@@ -111,7 +197,7 @@ def item_page(request):
     }
     return render(request, 'item_page.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def add_item(request):
     if request.method == 'POST':
         nama = request.POST.get('inputNamaItem')
@@ -148,7 +234,7 @@ def add_item(request):
         )
         return redirect('item_page')
     
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def edit_item(request):
     if request.method == 'POST':
         item_id = request.POST.get('inputItemId')
@@ -195,7 +281,7 @@ def edit_item(request):
         )
         return redirect('item_page')
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def delete_item(request):
     if request.method == 'POST':
         item_id = request.POST.get('inputDeleteId')
@@ -212,7 +298,7 @@ def delete_item(request):
 
 
 # ===== SAW VIEWS =====
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def saw_page(request):
     items = Item.objects.all()
 
@@ -238,7 +324,7 @@ def saw_page(request):
     return render(request, 'saw_page.html', context)
 
 # ===== KRITERIA VIEWS =====
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def kriteria_page(request):
 
     kriterias = Kriteria.objects.all()
@@ -247,7 +333,7 @@ def kriteria_page(request):
     }
     return render(request, 'kriteria_page.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def add_kriteria(request):
     nama_kriteria = request.POST.get('inputNamaKriteria')
     atribut = request.POST.get('inputAttribut')
@@ -292,7 +378,7 @@ def add_kriteria(request):
     )
     return redirect('kriteria_page')
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def edit_kriteria(request):
     id_kriteria = request.POST.get('inputKriteriaId')
     nama_kriteria = request.POST.get('inputNamaKriteria')
@@ -313,7 +399,7 @@ def edit_kriteria(request):
     )
     return redirect('kriteria_page')
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def delete_kriteria(request):
     if request.method == 'POST':
         kriteria_id = request.POST.get('inputDeleteId')
@@ -341,7 +427,7 @@ def delete_kriteria(request):
     return redirect('kriteria_page')
 
 # ===== SUBKRITERIA =====
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def subkriteria_page(request):
     subkriterias = Subkriteria.objects.all()
     kriterias = Kriteria.objects.all()
@@ -351,7 +437,7 @@ def subkriteria_page(request):
     }
     return render(request, 'subkriteria_page.html', context)
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def add_subkriteria(request):
     nama_subkriteria = request.POST.get('inputNamaSubkriteria')
     nama_kriteria = request.POST.get('inputNamaKriteria')
@@ -375,7 +461,7 @@ def add_subkriteria(request):
     
     return redirect('subkriteria_page')
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def edit_subkriteria(request):
     subkriteria_id = request.POST.get('inputKriteriaId')
     nama_subkriteria = request.POST.get('inputNamaSubkriteria')
@@ -403,7 +489,7 @@ def edit_subkriteria(request):
     )
     return redirect('subkriteria_page')
 
-@login_required(login_url='login/')
+@login_required(login_url='login-user/')
 def delete_subkriteria(request):
     subkriteria_id = request.POST['inputDeleteId']
     subkriteria = Subkriteria.objects.get(id=subkriteria_id)

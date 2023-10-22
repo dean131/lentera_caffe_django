@@ -66,10 +66,10 @@
             
             // add function
             $('.btn-add').on('click', function() {
-                document.getElementById('subkriteriaForm').action = '{% url "add_subkriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
-                $('#subkriteriaModalLabel').html('<strong>Tambah Subkriteria</strong>');
                 $('input').val('');
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('subkriteriaForm').action = '{% url "add_subkriteria" %}';
+                $('#subkriteriaModalLabel').html('<strong>Tambah Subkriteria</strong>');
             });
 
             var table = $('#dataTable').DataTable();
@@ -77,8 +77,8 @@
 
             // edit function 
             $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
                 document.getElementById('subkriteriaForm').action = '{% url "edit_subkriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#subkriteriaModalLabel').html('<strong>Edit Subkriteria</strong>');
                 // get data from row 
                 row_data = table.row($(this).parents('tr') ).data();
@@ -89,8 +89,8 @@
 
             // delete function 
             $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
                 document.getElementById('deleteForm').action = '{% url "delete_subkriteria" %}';
-                $('[name="csrfmiddlewaretoken"]').val(csrf_token);
                 $('#deleteModalLabel').html('<strong>Delete Subkriteria</strong>');
                 // get data from row 
                 row_data = table.row( $(this).parents('tr') ).data();

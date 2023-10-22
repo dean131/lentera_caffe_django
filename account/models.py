@@ -6,18 +6,18 @@ from django.contrib.auth.models import (
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password=None,  *args, **kwargs):
+    def create_user(self, email, full_name, password=None,  *args, **kwargs):
         if not email:
             raise ValueError('Users must have an email address')
 
-        user = self.model(email=self.normalize_email(email), *args, **kwargs)
+        user = self.model(email=self.normalize_email(email), full_name=full_name, *args, **kwargs)
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None):
-        user = self.create_user(email=email, password=password)
+    def create_superuser(self, email, full_name, password=None, *args, **kwargs):
+        user = self.create_user(email=email, password=password, full_name=full_name, *args, **kwargs)
         user.is_active = True
         user.is_admin = True
         user.is_superuser = True
@@ -40,7 +40,7 @@ class User(AbstractBaseUser):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['full_name']
 
     def __str__(self):
         return self.full_name

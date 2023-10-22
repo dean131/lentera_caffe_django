@@ -7,6 +7,13 @@
         <h1 class="h3 mb-0 text-gray-800"><strong>Data Pelanggan</strong></h1>
     </div>
 
+    <div class="mb-3">
+        <button type="button" class="btn btn-danger btn-add" data-bs-toggle="modal" data-bs-target="#modalUser">
+            <i class="fa-solid fa-plus"></i>
+            Tambahkan
+        </button>
+    </div>
+
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-body">
@@ -52,23 +59,45 @@
 
 {% block script %}
     <script>
-        
         $(document).ready(function () {
             $('#collapseTwo').collapse('show');
             $('.users-nav-item').addClass('active');
             $('.customers-nav-item').addClass('active');
 
+            const csrf_token = '{{csrf_token}}';
+            
+            // add function
+            $('.btn-add').on('click', function() {
+                $('input').val('');
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('formUser').action = '{% url "register_user" %}';
+                $('#modalUserLabel').html('<strong>Tambah Customer</strong>');
+            });
 
-            $('.edit-table-btn').on('click', function() {
-                var row = $(this).closest('tr');
-                var id = row.find('td:eq(0)').text();
-                var name = row.find('td:eq(1)').text();
-                var email = row.find('td:eq(2)').text();
-                var phone = row.find('td:eq(3)').text();
+            var table = $('#dataTable').DataTable();
+            var row_data;
 
-                var editname = document.getElementById('edit-name').value = name;
-                var editemail = document.getElementById('edit-email').value = email;
-                var editphone = document.getElementById('edit-phone').value = phone;
+            // edit function 
+            $('#dataTable tbody').on( 'click', '.btn-edit', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('formUser').action = '{% url "edit_user" %}';
+                $('#modalUserLabel').html('<strong>Edit User</strong>');
+                // get data from row 
+                row_data = table.row($(this).parents('tr')).data();
+                $('#inputUserId').val(row_data[0]);
+                $('#inputNamaUser').val(row_data[1]);
+                $('#inputEmailUser').val(row_data[2]);
+                $('#inputTeleponUser').val(row_data[3]);
+            });
+
+            // delete function 
+            $('#dataTable tbody').on( 'click', '.btn-delete', function () {
+                document.getElementsByName("csrfmiddlewaretoken")[0].value = csrf_token;
+                document.getElementById('deleteForm').action = '{% url "delete_user" %}';
+                $('#modalUserLabel').html('<strong>Delete User</strong>');
+                // get data from row 
+                row_data = table.row( $(this).parents('tr') ).data();
+                $('#inputDeleteId').val(row_data[0]);
             });
         });
     </script>

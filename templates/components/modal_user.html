@@ -9,16 +9,20 @@
             </div>
             <div class="modal-body">
             <div class="container-fluid">
-                <form method="post" id="formUser">
+                <form method="post" id="formUser" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row g-3">
+                        <div class="col-lg-12" hidden>
+                            <label for="inputUserId" class="form-label">Id:</label>
+                            <input type="text" class="form-control" id="inputUserId" name="inputUserId">
+                        </div>
                         <div class="col-lg-12">
                             <label for="inputNamaUser" class="form-label">Nama:</label>
                             <input type="text" class="form-control" id="inputNamaUser" name="inputNamaUser">
                         </div>
                         <div class="col-lg-6">
                             <label for="inputEmailUser" class="form-label">Email:</label>
-                            <input type="email" class="form-control" id="inputEmailUser">
+                            <input type="email" class="form-control" id="inputEmailUser" name="inputEmailUser">
                         </div>
                         <div class="col-lg-6">
                             <label for="inputTeleponUser" class="form-label">No. Telepon:</label>
@@ -26,15 +30,15 @@
                         </div>
                         <div class="col-lg-6">
                             <label for="inputPasswordUser" class="form-label">Password:</label>
-                            <input type="password" class="form-control" id="inputPasswordUser">
+                            <input type="password" class="form-control" id="inputPasswordUser" name="inputPasswordUser">
                         </div>
                         <div class="col-lg-6">
                             <label for="inputPassword2User" class="form-label">Konfirmasi Password:</label>
                             <input type="password" class="form-control" id="inputPassword2User" name="inputPassword2User">
                         </div>
                         <div class="col-lg-6">
-                            <label for="inputFotoUser" class="form-label">Foto</label>
-                            <input class="form-control" type="file" id="inputFotoUser">
+                            <label for="inputGambarUser" class="form-label">Foto</label>
+                            <input class="form-control" type="file" id="inputGambarUser" name="inputGambarUser">
                         </div>
                     </div>
                 </form>
